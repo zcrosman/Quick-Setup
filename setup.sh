@@ -19,12 +19,12 @@ bh_config=(
 
 
 #PATHS
-agressor_path='/home/'$SUDO_USER'/Documents/Agressor'
+agressor_path='/home/'$SUDO_USER'/Documents/BOFs'
 powershell_scripts='/opt/powershell'
 tools_path='/opt'
-win_source='/home/'$SUDO_USER'/Windows/Source'
-win_compiled='/home/'$SUDO_USER'/Windows/Compiled'
-payload_mod = '/opt/payloadMod'   
+win_source='/home/'$SUDO_USER'/Documents/Windows/Source'
+win_compiled='/home/'$SUDO_USER'/Documents/Windows/Compiled'
+payload_mod = '/opt'   
 
 
 check_user() {
@@ -53,12 +53,18 @@ install_BOFs() {
     # Agressor Scripts Download
     echo -e "\n\n\n Installing agressor scripts\n\n\n"
     git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness
+    git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF
     git clone https://github.com/rasta-mouse/Aggressor-Script.git $agressor_path/Rasta-agressor-scripts
     git clone https://github.com/Und3rf10w/Aggressor-scripts.git $agressor_path/Und3rf10w-agressor-scripts
     git clone https://github.com/harleyQu1nn/AggressorScripts $agressor_path/harleyQu1nn-agressor-scripts
     git clone https://github.com/anthemtotheego/CredBandit.git $agressor_path/CredBandit
     git clone https://github.com/mgeeky/cobalt-arsenal.git $agressor_path/cobalt-arsenal
     git clone https://github.com/boku7/BokuLoader.git $agressor_path/BokuLoader
+    git clone https://github.com/kyleavery/AceLdr.git $agressor_path/AceLdr
+    git clone https://github.com/outflanknl/HelpColor.git $agressor_path/HelpColor
+
+
+
     cd $agressor_path/BokuLoader
     make
     git clone https://github.com/Tylous/SourcePoint.git $agressor_path/SourcePoint
@@ -87,8 +93,10 @@ install_BOFs() {
 install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
     #Submime
-    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-    apt-get -y install apt-transport-https
+    #wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
+    echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list
+    #apt-get -y install apt-transport-https
     apt-get update
     apt-get -y install sublime-text
 
@@ -144,9 +152,32 @@ install_tools() {
     git clone https://github.com/andrew-d/static-binaries.git $tools_path/linux-static-binaries
 
     git clone https://github.com/nccgroup/scrying.git $tools_path/scrying
+    
     apt install -y feroxbuster
+    
+    git clone https://github.com/dirkjanm/ldapdomaindump.git $tools_path/ldapdomaindump
+    cd $tools_path/ldapdomaindump
+    python3 setup.py install
+
+    git clone https://github.com/clr2of8/DPAT.git $tools_path/DPAT
+
+
+    git clone https://github.com/topotam/PetitPotam.git $tools_path/PetitPotam
+
+
+    python3 -m pip install coercer
+
+    #git clone https://github.com/unode/firefox_decrypt $tools_path/firefox_decrypt
+
+    git clone https://github.com/Ridter/noPac.git $tools_path/noPac
+    cd $tools_path/noPac
+    python3 -m pip install -r reaquirements.txt
+    
+
     # Bloodhound and Neo4j install
     #install_bh
+
+
 
 
 # Powershell Tools
@@ -286,10 +317,14 @@ win_binaries(){
 }
 
 install_wl() {
-    # install additional wordlists
+    # Install additional wordlists
     # TODO
-    echo 'TODO'
+    # Fix rockyou
+    cd /usr/share/wordlists
+    gzip -dq /usr/share/wordlists/rockyou.txt.gz
+    # Add additional wordlists
     git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/SecLists
+
 }
 
 add_aliases() {
@@ -375,6 +410,11 @@ payload_creation () {
     go get github.com/Binject/debug/pe
     go install github.com/optiv/Mangle@latest
 
+    # Freeze
+    git clone https://github.com/optiv/Freeze.git $payload_mod/Freeze
+    cd $payload_mod/Freeze
+    go build Freeze
+
 }
 
 options () {
@@ -382,31 +422,31 @@ options () {
     echo -e "\n    Select an option from menu:"                      
     echo -e "\n Key  Menu Option:               Description:"
     echo -e " ---  ------------               ------------"
-    echo -e "  1 - Basic Install              Run commands (3,4,5)" # TODO - organize the basic install 
+    echo -e "  1 - Basic Install              Run commands (5,6,7)" # TODO - organize the basic install 
     echo -e "  2 - Install All                Run all of the commands below (1-5)"    
     echo -e "  3 - Install Windows binaries   Install Windows binaries into " $win_compiled       
     echo -e "  4 - Install Windows source     Install Windows source into " $win_source                      
-    echo -e "  5 - Install Kali tools         Install common Kali tools into " $tools_path  
-    echo -e "  6 - Instal BOFs                Install Cobalt Strike agressor scripts into " $agressor_path                            
-    echo -e "  7 - Start BloodHound           Start Neo4j and BloodHound (installs if not already installed)"
-    echo -e "  8 - Install wordlists (TODO)   Install additional wordlists"
-    echo -e "  8 - Add aliases (TODO)         TODO"
-    echo -e "  9 - Payload Creation                       TODO"
+    echo -e "  5 - Install Linux tools        Install common Linux tools into " $tools_path  
+    echo -e "  6 - Instal BOFs                Install Cobalt Strike agressor scripts into " $agressor_path      
+    echo -e "  7 - Payload Creation           Install tools for payload creation/modification into" $payload_creation                      
+    echo -e "  8 - Start BloodHound           Start Neo4j and BloodHound (installs if not already installed)"
+    echo -e "  9 - Add aliases (TODO)         TODO"
+    echo -e "  w - Install wordlists (TODO)   Install additional wordlists"
     echo -e "  x - Exit                       Exit the setup script"                                      
 
     read -n1 -p "\n  Press key for menu item selection or press X to exit: " menu
 
     case $menu in
-        1) win_binaries;install_tools;install_BOFs;;
-        2) setup;install_go;win_source;win_binaries;install_tools;install_BOFs;;
+        1) install_tools;install_BOFs;payload_creation;;
+        2) setup;install_go;win_binaries;install_tools;install_BOFs;payload_creation;;
         3) win_source;;
         4) win_binaries;;
         5) install_tools;;
         6) install_BOFs;;
-        7) check_bh;;
-        9) install_wl;;
+        7) payload_creation;;
+        8) check_bh;;
         9) add_aliases;;
-        9) payload_creation;;
+        w) install_wl;;
         x) exit;;  
     esac
 
