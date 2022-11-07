@@ -25,7 +25,7 @@ tools_path='/opt'
 win_source='/home/'$SUDO_USER'/Documents/Windows/Source'
 win_compiled='/home/'$SUDO_USER'/Documents/Windows/Compiled'
 payload_mod = '/opt'   
-
+verbose = '1&>/dev/null'
 
 check_user() {
 if [ "$EUID" -ne 0 ]
@@ -41,35 +41,44 @@ setup() {
     apt install -y python3-pip
 }
 
+check_go(){
+    # TODO - check for go installation
+    which go 1>/dev/null
+    if [ $? -ne 0 ]
+        then install_go 
+    else
+        echo "\nGo already installed\n\n"
+    fi
+    
+}
+
 install_go(){
-    sudo apt install -y golang
+    apt install -y golang
     export GOROOT=/usr/lib/go
     export GOPATH=$HOME/go
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-    source .bashrc
+    source ~/.zshrc
 }
 
 install_BOFs() {
     # Agressor Scripts Download
-    echo -e "\n\n\n Installing agressor scripts\n\n\n"
-    git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness
-    git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF
-    git clone https://github.com/rasta-mouse/Aggressor-Script.git $agressor_path/Rasta-agressor-scripts
-    git clone https://github.com/Und3rf10w/Aggressor-scripts.git $agressor_path/Und3rf10w-agressor-scripts
-    git clone https://github.com/harleyQu1nn/AggressorScripts $agressor_path/harleyQu1nn-agressor-scripts
-    git clone https://github.com/anthemtotheego/CredBandit.git $agressor_path/CredBandit
-    git clone https://github.com/mgeeky/cobalt-arsenal.git $agressor_path/cobalt-arsenal
-    git clone https://github.com/boku7/BokuLoader.git $agressor_path/BokuLoader
-    git clone https://github.com/kyleavery/AceLdr.git $agressor_path/AceLdr
-    git clone https://github.com/outflanknl/HelpColor.git $agressor_path/HelpColor
+    echo -e "\n\n\n Installing agressor scripts in " $agressor_path
+    git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness 1&>/dev/null
+    git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF 1&>/dev/null
+    git clone https://github.com/rasta-mouse/Aggressor-Script.git $agressor_path/Rasta-agressor-scripts 1&>/dev/null
+    git clone https://github.com/Und3rf10w/Aggressor-scripts.git $agressor_path/Und3rf10w-agressor-scripts 1&>/dev/null
+    git clone https://github.com/harleyQu1nn/AggressorScripts $agressor_path/harleyQu1nn-agressor-scripts 1&>/dev/null
+    git clone https://github.com/anthemtotheego/CredBandit.git $agressor_path/CredBandit 1&>/dev/null
+    git clone https://github.com/mgeeky/cobalt-arsenal.git $agressor_path/cobalt-arsenal 1&>/dev/null
+    git clone https://github.com/kyleavery/AceLdr.git $agressor_path/AceLdr 1&>/dev/null
+    git clone https://github.com/outflanknl/HelpColor.git $agressor_path/HelpColor 1&>/dev/null
 
-
-
+    git clone https://github.com/boku7/BokuLoader.git $agressor_path/BokuLoader 1&>/dev/null
     cd $agressor_path/BokuLoader
-    make
-    git clone https://github.com/Tylous/SourcePoint.git $agressor_path/SourcePoint
-    git clone https://github.com/helpsystems/nanodump.git $agressor_path/nanodump
-    git clone https://github.com/rsmudge/unhook-bof $agressor_path/unhook
+    make 1&>/dev/null
+    git clone https://github.com/Tylous/SourcePoint.git $agressor_path/SourcePoint 1&>/dev/null
+    git clone https://github.com/helpsystems/nanodump.git $agressor_path/nanodump 1&>/dev/null
+    git clone https://github.com/rsmudge/unhook-bof $agressor_path/unhook 1&>/dev/null
     #BOFNET
     wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     dpkg -i packages-microsoft-prod.deb
@@ -81,7 +90,7 @@ install_BOFs() {
     git clone https://github.com/williamknows/BOF.NET.git $agressor_path/BOFNET
     mkdir BOFNET/build
     cd BOFNET/build
-    sudo apt install -y cmake
+    apt install -y cmake
     cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=../toolchain/Linux-mingw64.cmake ..
     cmake --build .
     cmake --install .
@@ -138,9 +147,9 @@ install_tools() {
     python3 -m pip install $tools_path/DonPAPI/requirements.txt
     
     # Eyewitness
-    git clone https://github.com/FortyNorthSecurity/EyeWitness.git $tools_path/EyeWitness
-    cd $tools_path/EyeWitness/Python/setup
-    ./setup.sh
+    # git clone https://github.com/FortyNorthSecurity/EyeWitness.git $tools_path/EyeWitness
+    # cd $tools_path/EyeWitness/Python/setup
+    # ./setup.sh
 
     # Aquatone
     git clone https://github.com/michenriksen/aquatone.git $tools_path/aquatone
@@ -178,8 +187,6 @@ install_tools() {
     #install_bh
 
 
-
-
 # Powershell Tools
     #PowerSploit (PowerView, PowerUp, etc)
     git clone https://github.com/PowerShellMafia/PowerSploit.git $powershell_scripts/PowerSploit
@@ -195,6 +202,8 @@ install_tools() {
 }
 
 check_bh() {
+    # check if bloodhound installed
+    
     DIR=$tools_path'/BloodHound'
     echo $DIR
     if [ -d $tools_path'/BloodHound' ]
@@ -207,7 +216,6 @@ check_bh() {
         install_bh
         start_bh
     fi
-
 }
 
 
@@ -437,8 +445,8 @@ options () {
     read -n1 -p "\n  Press key for menu item selection or press X to exit: " menu
 
     case $menu in
-        1) install_tools;install_BOFs;payload_creation;;
-        2) setup;install_go;win_binaries;install_tools;install_BOFs;payload_creation;;
+        1) setup;check_go;install_tools;install_BOFs;payload_creation;;
+        2) setup;check_go;win_binaries;install_tools;install_BOFs;payload_creation;;
         3) win_source;;
         4) win_binaries;;
         5) install_tools;;
