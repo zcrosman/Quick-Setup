@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-# TODO
-# - testing
-# - more tools!
-# - automation of common repeatable tasks???
-
-
 typeset -A bh_config
 # If you want to use bloodhound integration with cme update the parameters below 
 # If you want to remove this funcationality set the [bh_enabled] parameter to false
@@ -19,13 +13,14 @@ bh_config=(
 
 
 #PATHS
-agressor_path='/home/'$SUDO_USER'/Documents/BOFs'
+agressor_path='/opt/BOFs'
 powershell_scripts='/opt/powershell'
 tools_path='/opt'
-win_source='/home/'$SUDO_USER'/Documents/Windows/Source'
-win_compiled='/home/'$SUDO_USER'/Documents/Windows/Compiled'
+win_source='/opt/Windows/Source'
+win_compiled='/opt/Windows/Compiled'
 payload_mod = '/opt'   
-verbose = '1&>/dev/null'
+#verbose='1>/dev/null'
+
 
 check_user() {
 if [ "$EUID" -ne 0 ]
@@ -37,13 +32,15 @@ fi
 
 setup() {
     # Initial updates and installs
-    apt update
-    apt install -y python3-pip
+    apt update 
+    apt install -y git-all 
+    apt install -y python3-pip 
+    mv loader.cna $agressor_path/loader.cna
 }
 
 check_go(){
     # TODO - check for go installation
-    which go 1>/dev/null
+    which go 
     if [ $? -ne 0 ]
         then install_go 
     else
@@ -53,47 +50,48 @@ check_go(){
 }
 
 install_go(){
-    apt install -y golang
+    apt install -y golang 
     export GOROOT=/usr/lib/go
     export GOPATH=$HOME/go
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+    source ~/.bashrc
     source ~/.zshrc
 }
 
 install_BOFs() {
     # Agressor Scripts Download
     echo -e "\n\n\n Installing agressor scripts in " $agressor_path
-    git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness 1&>/dev/null
-    git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF 1&>/dev/null
-    git clone https://github.com/rasta-mouse/Aggressor-Script.git $agressor_path/Rasta-agressor-scripts 1&>/dev/null
-    git clone https://github.com/Und3rf10w/Aggressor-scripts.git $agressor_path/Und3rf10w-agressor-scripts 1&>/dev/null
-    git clone https://github.com/harleyQu1nn/AggressorScripts $agressor_path/harleyQu1nn-agressor-scripts 1&>/dev/null
-    git clone https://github.com/anthemtotheego/CredBandit.git $agressor_path/CredBandit 1&>/dev/null
-    git clone https://github.com/mgeeky/cobalt-arsenal.git $agressor_path/cobalt-arsenal 1&>/dev/null
-    git clone https://github.com/kyleavery/AceLdr.git $agressor_path/AceLdr 1&>/dev/null
-    git clone https://github.com/outflanknl/HelpColor.git $agressor_path/HelpColor 1&>/dev/null
+    git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness 
+    git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF 
+    git clone https://github.com/rasta-mouse/Aggressor-Script.git $agressor_path/Rasta-agressor-scripts 
+    git clone https://github.com/Und3rf10w/Aggressor-scripts.git $agressor_path/Und3rf10w-agressor-scripts 
+    git clone https://github.com/harleyQu1nn/AggressorScripts $agressor_path/harleyQu1nn-agressor-scripts 
+    git clone https://github.com/anthemtotheego/CredBandit.git $agressor_path/CredBandit 
+    git clone https://github.com/mgeeky/cobalt-arsenal.git $agressor_path/cobalt-arsenal 
+    git clone https://github.com/kyleavery/AceLdr.git $agressor_path/AceLdr 
+    git clone https://github.com/outflanknl/HelpColor.git $agressor_path/HelpColor 
 
-    git clone https://github.com/boku7/BokuLoader.git $agressor_path/BokuLoader 1&>/dev/null
+    git clone https://github.com/boku7/BokuLoader.git $agressor_path/BokuLoader 
     cd $agressor_path/BokuLoader
-    make 1&>/dev/null
-    git clone https://github.com/Tylous/SourcePoint.git $agressor_path/SourcePoint 1&>/dev/null
-    git clone https://github.com/helpsystems/nanodump.git $agressor_path/nanodump 1&>/dev/null
-    git clone https://github.com/rsmudge/unhook-bof $agressor_path/unhook 1&>/dev/null
+    make 
+    git clone https://github.com/Tylous/SourcePoint.git $agressor_path/SourcePoint 
+    git clone https://github.com/helpsystems/nanodump.git $agressor_path/nanodump 
+    git clone https://github.com/rsmudge/unhook-bof $agressor_path/unhook 
     #BOFNET
     wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-    dpkg -i packages-microsoft-prod.deb
-    rm packages-microsoft-prod.deb
-    apt-get update
-    apt-get install -y apt-transport-https
-    apt-get update
-    apt-get install -y dotnet-sdk-5.0
-    git clone https://github.com/williamknows/BOF.NET.git $agressor_path/BOFNET
-    mkdir BOFNET/build
-    cd BOFNET/build
-    apt install -y cmake
-    cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=../toolchain/Linux-mingw64.cmake ..
-    cmake --build .
-    cmake --install .
+    dpkg -i packages-microsoft-prod.deb 
+    rm packages-microsoft-prod.deb 
+    apt-get update 
+    apt-get install -y apt-transport-https 
+    apt-get update 
+    apt-get install -y dotnet-sdk-5.0 
+    git clone https://github.com/williamknows/BOF.NET.git $agressor_path/BOFNET 
+    mkdir BOFNET/build 
+    cd BOFNET/build 
+    apt install -y cmake 
+    cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=../toolchain/Linux-mingw64.cmake .. 
+    cmake --build . 
+    cmake --install . 
 
     # TODO add custom BOFs
     # TODO load into Cobalt Strike
@@ -103,31 +101,31 @@ install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
     #Submime
     #wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
-    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
-    echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list
+    wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null 
+    echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list 
     #apt-get -y install apt-transport-https
-    apt-get update
-    apt-get -y install sublime-text
+    apt-get update 
+    apt-get -y install sublime-text 
 
     # mitm6
-    git clone https://github.com/dirkjanm/mitm6.git $tools_path/mitm6
-    pip3 install -r $tools_path/mitm6/requirements.txt
-    python $tools_path/mitm6/setup.py install
+    git clone https://github.com/dirkjanm/mitm6.git $tools_path/mitm6 
+    pip3 install -r $tools_path/mitm6/requirements.txt 
+    python $tools_path/mitm6/setup.py install 
 
     # Bloodhound.py (Current Version)
-    git clone https://github.com/fox-it/BloodHound.py.git $tools_path/BloodHound_NEW.py
+    git clone https://github.com/fox-it/BloodHound.py.git $tools_path/BloodHound_NEW.py 
 
     #Amass
-    go install -v github.com/OWASP/Amass/v3/...@master
+    go install -v github.com/OWASP/Amass/v3/...@master 
 
 
-    pip install colorama pysnmp
-    pip install win_unicode_console
-    git clone https://github.com/RUB-NDS/PRET
+    pip install colorama pysnmp 
+    pip install win_unicode_console 
+    git clone https://github.com/RUB-NDS/PRET $tools_path/PRET 
 
-    git clone https://github.com/Hackndo/WebclientServiceScanner.git $tools_path/WebclientServiceScanner
+    git clone https://github.com/Hackndo/WebclientServiceScanner.git $tools_path/WebclientServiceScanner 
     cd WebclientServiceScanner
-    python3 setup.py instdall
+    python3 setup.py install 
 
     # PEASS
     # TODO - add PEASS binaries to binaries folder
@@ -140,11 +138,11 @@ install_tools() {
     git clone https://github.com/skelsec/pypykatz.git $tools_path/pypykatz
 
     # evilwin-rm
-    gem install evil-winrm
+    # gem install evil-winrm
 
     # DonPAPI
-    https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI
-    python3 -m pip install $tools_path/DonPAPI/requirements.txt
+    git clone https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI
+    python3 -m pip install -r $tools_path/DonPAPI/requirements.txt
     
     # Eyewitness
     # git clone https://github.com/FortyNorthSecurity/EyeWitness.git $tools_path/EyeWitness
@@ -180,7 +178,7 @@ install_tools() {
 
     git clone https://github.com/Ridter/noPac.git $tools_path/noPac
     cd $tools_path/noPac
-    python3 -m pip install -r reaquirements.txt
+    python3 -m pip install -r reqirements.txt
     
 
     # Bloodhound and Neo4j install
@@ -363,37 +361,37 @@ payload_creation () {
     #nimcrypt
 
     #packmypayload
-    git clone https://github.com/mgeeky/PackMyPayload.git $payload_mod/packmypayload
-    cd $payload_mod/packmypayload
+    git clone https://github.com/mgeeky/PackMyPayload.git $tools_path/packmypayload
+    cd $tools_path/packmypayload
     pip install --upgrade pip setuptools wheel
     python3 -m pip install -r requirements.txt
 
     #nimpact
-    git clone https://github.com/chvancooten/NimPackt-v1.git $payload_mod/nimpact
-    cd $payload_mod/nimpact
+    git clone https://github.com/chvancooten/NimPackt-v1.git $tools_path/nimpact
+    cd $tools_path/nimpact
     apt install -y nim
     pip3 install pycryptodome argparse
     nimble install -y winim nimcrypto
 
     #uru
-    git clone https://github.com/guervild/uru.git $payload_mod/uru
-    cd $payload_mod/uru
+    git clone https://github.com/guervild/uru.git $tools_path/uru
+    cd $tools_path/uru
     go install mvdan.cc/garble@latest
     go get github.com/C-Sto/BananaPhone
     go install github.com/guervild/uru@latest
 
     #ftp
-    git clone https://github.com/Unknow101/FuckThatPacker.git $payload_mod/ftp
+    git clone https://github.com/Unknow101/FuckThatPacker.git $tools_path/ftp
 
     # AVSignSeek (not payload creation, but used to detect where binary/paload is triggered in AV)
-    git clone https://github.com/hegusung/AVSignSeek.git $payload_mod/AVSignSeek
+    git clone https://github.com/hegusung/AVSignSeek.git $tools_path/AVSignSeek
 
     # darkarmour
-    git clone https://github.com/bats3c/darkarmour $payload_mod/darkarmour
+    git clone https://github.com/bats3c/darkarmour $tools_path/darkarmour
     apt -y install mingw-w64-tools mingw-w64-common g++-mingw-w64 gcc-mingw-w64 upx-ucl osslsigncode
     
     # ScareCrow
-    git clone https://github.com/optiv/ScareCrow.git $payload_mod/ScareCrow
+    git clone https://github.com/optiv/ScareCrow.git $tools_path/ScareCrow
     go get github.com/fatih/color
     go get github.com/yeka/zip
     go get github.com/josephspurrier/goversioninfo
@@ -404,23 +402,23 @@ payload_creation () {
     pip3 install donut-shellcode
 
     # Ruler
-    git clone https://github.com/sensepost/ruler.git $payload_mod/ruler
+    git clone https://github.com/sensepost/ruler.git $tools_path/ruler
 
     #Morph-HTA
-    git clone https://github.com/vysecurity/morphHTA.git $payload_mod/morphHTA
+    git clone https://github.com/vysecurity/morphHTA.git $tools_path/morphHTA
 
     # Invoke-Obfuscation
-    git clone https://github.com/danielbohannon/Invoke-Obfuscation.git $payload_mod/Invoke-Obfuscation
+    git clone https://github.com/danielbohannon/Invoke-Obfuscation.git $tools_path/Invoke-Obfuscation
 
     #mangle
-    git clone https://github.com/optiv/Mangle.git $payload_mod/mangle
-    cd $payload_mod/mangle
+    git clone https://github.com/optiv/Mangle.git $tools_path/mangle
+    cd $tools_path/mangle
     go get github.com/Binject/debug/pe
     go install github.com/optiv/Mangle@latest
 
     # Freeze
-    git clone https://github.com/optiv/Freeze.git $payload_mod/Freeze
-    cd $payload_mod/Freeze
+    git clone https://github.com/optiv/Freeze.git $tools_path/Freeze
+    cd $tools_path/Freeze
     go build Freeze
 
 }
@@ -430,7 +428,7 @@ options () {
     echo -e "\n    Select an option from menu:"                      
     echo -e "\n Key  Menu Option:               Description:"
     echo -e " ---  ------------               ------------"
-    echo -e "  1 - Basic Install              Run commands (5,6,7)" # TODO - organize the basic install 
+    echo -e "  1 - Basic Install              Run commands (5,6,7)" 
     echo -e "  2 - Install All                Run all of the commands below (1-5)"    
     echo -e "  3 - Install Windows binaries   Install Windows binaries into " $win_compiled       
     echo -e "  4 - Install Windows source     Install Windows source into " $win_source                      
