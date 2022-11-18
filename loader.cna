@@ -1,12 +1,6 @@
-# Instead of having to load multiple aggressor scripts, define the scripts you want within this master loader and it will load them all for you.
-# Modified Scripts to load to be at top for easy access.
-# Once "loaded" can unload the 'load' script w/o impacting other scripts (but no harm in it remaining.)
-# Can also use it to 'reload' all scripts (or load other scripts individually).
-# Found at https://ntamonsec.blogspot.com/2020/07/cobalt-strike-aggressor-scripts-ception.html, which links to https://gist.github.com/am0nsec/e8c86a249368b46a071d99be44605cc5
-
 # Scripts to load
 @scripts_to_load = @(
-        "/opt/BOFs/BOFNET/bofnet.cna",
+        "/opt/BOFs/BOFNET/build/dist/net40/bofnet.cna",
         "/opt/BOFs/bokuloader/BokuLoader.cna",
         "/opt/BOFs/CS-Remote-OPs-BOF/Remote/Remote.cna",
         "/opt/BOFs/CS-Remote-OPs-BOF/Injection/Injection.cna",
@@ -16,6 +10,17 @@
         "/opt/BOFs/Rasta-agressor-scripts/loader.cna",
         "/opt/BOFs/nanodump/NanoDump.cna",
         "/opt/BOFs/unhook/unhook.cna",
+        "/opt/BOFs/harleyQu1nn-agressor-scripts/ProcessColor.cna",
+        "/opt/BOFs/Flagvik-CobaltStuff/better-upload.cna",
+        "/opt/BOFs/Flagvik-CobaltStuff/cwd-in-beacon-status-bar.cna",
+        "/opt/BOFs/Flagvik-CobaltStuff/rename-beacon-tabs.cna",
+        "/opt/BOFs/Flagvik-CobaltStuff/parse-error-codes.cna",
+        "/opt/BOFs/Flagvik-CobaltStuff/FilesColor.cna",
+        "/opt/BOFs/Flagvik-CobaltStuff/EDR.cna",
+        "/opt/BOFs/RiccardoAncarani-BOFs/cat/cat.cna",
+        "/opt/BOFs/LdapSignCheck/BofLdapSignCheck/BofLdapSignCheck.cna",
+        "/opt/BOFs/injectEtwBypass/injectEtwBypass.cna",
+        "/opt/BOFs/BofRoast/BofRoast/BofRoast.cna"
 );
 
 # Java packages
