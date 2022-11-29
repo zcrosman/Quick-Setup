@@ -486,49 +486,20 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) option1;;
-                2) option2;;
-                3) option3;;
-                4) option4;;
-                5) option5;;
-                6) option6;;
-                7) option7;;
-                8) option8;;
-                9) option9;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;;
+                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;;
+                3) win_source;;
+                4) win_binaries;;
+                5) setup;check_go;install_tools;;
+                6) install_BOFs;;
+                7) setup;check_go;payload_creation;;
+                8) check_bh;;
+                9) add_aliases;;
                 w) option_w;;
                 x) exit;;  
             esac
         else menu
     fi
-}
-
-# Added option funcs to make sure menu and argument options stayed consistant
-option1() {
-    setup;check_go;install_BOFs;install_tools;payload_creation;
-}
-option2() {
-    setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;
-}
-option3() {
-    win_source
-}
-option4() {
-    win_binaries
-}
-option5() {
-    setup;check_go;install_tools
-}
-option6() {
-    install_BOFs
-}
-option7() {
-    setup;check_go;payload_creation
-}
-option8() {
-    check_bh
-}
-option9() {
-    add_aliases
 }
 
 # main
