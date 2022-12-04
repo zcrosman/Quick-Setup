@@ -37,7 +37,6 @@ setup() {
 }
 
 check_go(){
-    # TODO - check for go installation
     which go 
     if [ $? -ne 0 ]
         then install_go 
@@ -99,7 +98,6 @@ install_BOFs() {
     cmake --install . 
 
     # TODO add custom BOFs
-    # TODO load into Cobalt Strike
 }
 
 install_tools() {
@@ -359,7 +357,9 @@ install_wl() {
     cd /usr/share/wordlists
     gzip -dq /usr/share/wordlists/rockyou.txt.gz 
     # Add additional wordlists
-    git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/SecLists 
+    git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/SecLists
+    git clone https://github.com/Karanxa/Bug-Bounty-Wordlists.git /usr/share/wordlists/Karanxa-Bug-Bounty
+
 
 }
 
@@ -368,24 +368,18 @@ add_aliases() {
     # nmap detailed
     # parse
     # web scan
-    alias discover
-    alias hi='hi :)' # :)
     alias untar='tar -xf'
     alias www='python3 -m http.server 8080'
     alias ports='netstat -tulanp'
+    alias copy='echo "List of long commands to copy and paste\n\nDiscovery\n ---------------\n nmap -Pn -n -sS -p 21-23,25,53,88,111,137,139,445,80,443,3389,8443,8080 -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms \--max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapdiscovery \-vvv --open -iL targets.txt\n\nFull Scan\n---------------\n nmap -Pn -n -sS -p- -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms \--max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapfull \-vvv --open -iL targets-live.txt\n\nFerox\n---------------\nferoxbuster --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0\" -k -T 3 --scan-limit 10 --rate-limit 50 -x sqlite,db,sqlite3,db3,html,txt,php -C 400,500,404 -u https://www.example.com -w /usr/share/wordlists/Karanxa-Bug-Bounty/all_fuzz.txt\n\n"'
+    
+
+    
     #alias quick='todo'
     #alias full='todo'
 
 
 }
-
-basic_scripts() {
-    # TODO 
-    echo 'TODO Create basic scirpts'
-
-}
-
-
 
 payload_creation () {
     #packmypayload
@@ -486,8 +480,8 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;;
-                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;install_wl;add_aliases;;
+                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;add_aliases;;
                 3) win_source;;
                 4) win_binaries;;
                 5) setup;check_go;install_tools;;
@@ -495,7 +489,7 @@ options() {
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
                 9) add_aliases;;
-                w) option_w;;
+                w) option_wl;;
                 x) exit;;  
             esac
         else menu
