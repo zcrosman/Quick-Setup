@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
 
-# typeset -A bh_config
-# # If you want to use bloodhound integration with cme update the parameters below 
-# # If you want to remove this funcationality set the [bh_enabled] parameter to false
-# bh_config=(
-#     [bh_enabled]="True"
-#     [bh_uri]="127.0.0.1"
-#     [bh_port]="7687"
-#     [bh_user]="neo4j"       # CHANGE THIS
-#     [bh_pass]="password"    # CHANGE THIS
-# )
-
 
 #PATHS
 agressor_path='/opt/BOFs'
@@ -33,6 +22,7 @@ setup() {
     apt update 
     apt install -y git-all 
     apt install -y python3-pip 
+    mkdir $agressor_path
     cp loader.cna $agressor_path/loader.cna
 }
 
@@ -110,12 +100,15 @@ install_tools() {
     apt-get update 
     apt-get -y install sublime-text 
 
+    #BloodHound
+    check_bh
+
     # mitm6
     echo -e "Installing mitm6\n"
     git clone https://github.com/dirkjanm/mitm6.git $tools_path/mitm6 
     #pip3 install -r $tools_path/mitm6/requirements.txt 
     cd $tools_path/mitm6
-    python setup.py install 
+    python3 setup.py install 
 
     # Bloodhound.py (Current Version)
     echo -e "Installing Bloodhound.py\n"
@@ -133,6 +126,11 @@ install_tools() {
     echo -e "Installing WebClientServiceScanner\n"
     git clone https://github.com/Hackndo/WebclientServiceScanner.git $tools_path/WebclientServiceScanner 
     cd WebclientServiceScanner
+    python3 setup.py install 
+
+    # for testing
+    git clone https://github.com/zcrosman/WebclientServiceScanner.git $tools_path/WebclientServiceScanner-custom
+    cd WebclientServiceScanner2
     python3 setup.py install 
 
     # PEASS
@@ -202,14 +200,12 @@ install_tools() {
     echo -e "Installing noPac\n"
     git clone https://github.com/Ridter/noPac.git $tools_path/noPac 
     cd $tools_path/noPac
-    python3 -m pip install -r reqirements.txt 
+    python3 -m pip install -r requirements.txt 
+    
     
 
-    # Bloodhound and Neo4j install
-    #install_bh
 
-
-# Powershell Tools
+    # Powershell Tools
     #PowerSploit (PowerView, PowerUp, etc)
     echo -e "Installing PowerSploit\n"
     git clone https://github.com/PowerShellMafia/PowerSploit.git $powershell_scripts/PowerSploit 
@@ -235,38 +231,42 @@ check_bh() {
     if [ -d $tools_path'/BloodHound' ]
     then
         echo -e "BloodHound Already Installed...."
-        start_bh
+        #start_bh
     else
         echo -e "BloodHound not installed"
         echo -e "Installing BloodHound and Neo4j"
         install_bh
-        start_bh
+        #start_bh
     fi
 }
 
 
 cme_config() {
-    echo 'Setting up cme.conf'
-    conf='/home/'$SUDO_USER'/.cme/cme.conf'
+    conf='/root/.cme/cme.conf'
+    echo "Updating CME config in "$conf
 
     # For "professional" screenshots
-    sed -i 's/Pwn3d/Admin Access!/g' $conf
+    sed -i 's/Pwn3d/Admin Access/g' $conf
+    sed -i 's/audit_mode =/audit_mode = */g' $conf
+
+    read -p "Neo4j Username: " neo4j_usr
+    read -sp "Neo4j Password: " neo4j_pwd
 
     # Update cme/bh integration
-    sed -i 's/False/'${bh_config[bh_enabled]}'/g' $conf
-    sed -i 's/127.0.0.1/'${bh_config[bh_uri]}'/g' $conf
-    sed -i 's/7687/'${bh_config[bh_port]}'/g' $conf
-    sed -i 's/user/'${bh_config[bh_user]}'/g' $conf
-    sed -i 's/pass/'${bh_config[bh_pass]}'/g' $conf
+    sed -i 's/bh_enabled = False/bh_enabled = True/g' $conf
+    sed -i 's/bh_uri = 127.0.0.1/bh_uri = 127.0.0.1/g' $conf
+    sed -i 's/bh_port = 7687/bh_port = 7687/g' $conf
+    sed -i 's/bh_user = neo4j/bh_user = '$neo4j_usr'/g' $conf
+    sed -i 's/bh_pass = neo4j/bh_pass = '$neo4j_pwd'/g' $conf
 }
 
 
 install_bh() {
     # BloodHound
-    mkdir $tools_path/BloodHound
-    wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound/BloodHound_4.1.zip 
-    wget https://github.com/BloodHoundAD/BloodHound/releases/tag/4.0.3 -O $tools_path/BloodHound/BloodHound_4.0.3.zip 
-    cd $tools_path/BloodHound
+    mkdir $tools_path/BloodHound-All
+    wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_4.1.zip 
+    wget https://github.com/BloodHoundAD/BloodHound/releases/tag/4.0.3 -O $tools_path/BloodHound-All/BloodHound_4.0.3.zip 
+    cd $tools_path/BloodHound-All
     unzip BloodHound_4.1.zip 
     unzip BloodHound_4.0.3.zip 
 
@@ -278,7 +278,7 @@ install_bh() {
         cme_config
     else
         echo -e "Initializing cme"
-        crackmapexec
+        crackmapexec &>/dev/null
         cme_config
     fi
 
@@ -287,11 +287,11 @@ install_bh() {
 
 
     # Neo4j
-    wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add - 
-    echo 'deb https://debian.neo4j.com stable 4.0' > /etc/apt/sources.list.d/neo4j.list 
-    apt-get update 
-    apt-get install -y apt-transport-https neo4j 
-    systemctl stop neo4j 
+    # wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add - 
+    # echo 'deb https://debian.neo4j.com stable 4.0' > /etc/apt/sources.list.d/neo4j.list 
+    # apt-get update 
+    # apt-get install -y apt-transport-https neo4j 
+    # systemctl stop neo4j 
 }
 
 
@@ -300,9 +300,6 @@ start_bh() {
     cd $tools_path/BloodHound/BloodHound-linux-x64
     ./BloodHound --no-sandbox &
     
-    # Add custom bloodhound queries from hausec (will need to refresh on first open)
-    wget https://raw.githubusercontent.com/hausec/Bloodhound-Custom-Queries/master/customqueries.json -O '/home/'$SUDO_USER'/.config/bloodhound/customqueries.json'
-
     echo -e "Starting neo4j!!!"
     cd /usr/bin
     ./neo4j console 
@@ -351,9 +348,6 @@ win_binaries(){
 }
 
 install_wl() {
-    # Install additional wordlists
-    # TODO
-    # Fix rockyou
     cd /usr/share/wordlists
     gzip -dq /usr/share/wordlists/rockyou.txt.gz 
     # Add additional wordlists
@@ -371,16 +365,14 @@ add_aliases() {
     alias untar='tar -xf'
     alias www='python3 -m http.server 8080'
     alias ports='netstat -tulanp'
-    alias copy='echo "List of long commands to copy and paste\n\nDiscovery\n ---------------\n nmap -Pn -n -sS -p 21-23,25,53,88,111,137,139,445,80,443,3389,8443,8080 -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms \--max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapdiscovery \-vvv --open -iL targets.txt\n\nFull Scan\n---------------\n nmap -Pn -n -sS -p- -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms \--max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapfull \-vvv --open -iL targets-live.txt\n\nFerox\n---------------\nferoxbuster --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0\" -k -T 3 --scan-limit 10 --rate-limit 50 -x sqlite,db,sqlite3,db3,html,txt,php -C 400,500,404 -u https://www.example.com -w /usr/share/wordlists/Karanxa-Bug-Bounty/all_fuzz.txt\n\n"'
-    
-
-    
-    #alias quick='todo'
-    #alias full='todo'
-
-
+    alias cheatsheet='echo "\nList of long commands to copy and paste \
+    \n\nDiscovery\n---------------\n nmap -Pn -n -sS -p 21-23,25,53,88,111,137,139,445,80,443,3389,8443,8080 -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapdiscovery -vvv --open -iL targets.txt \
+    \n\nFull Scan\n---------------\n nmap -Pn -n -sS -p- -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapfull -vvv --open -iL targets-live.txt \
+    \n\nFerox\n---------------\n feroxbuster --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0\" -k -T 3 --scan-limit 10 --rate-limit 50 -x html,txt,php -C 400,500,404 -w /usr/share/wordlists/Karanxa-Bug-Bounty/all_fuzz.txt -u https://www.example.com \
+    \n\nCME\n---------------\n docker run -it --entrypoint=/bin/sh --name crackmapexec -v ~/.cme:/root/.cme Porchetta-Industries/crackmapexe\n docker exec -it crackmapexec sh \
+    \n\n"'
 }
-
+ß
 payload_creation () {
     #packmypayload
     echo -e "Installing PackMyPayload\n"
@@ -459,7 +451,7 @@ menu () {
     echo -e "  2 - Install All                Run all of the commands below (1-5)"    
     echo -e "  3 - Install Windows binaries   Install Windows binaries into " $win_compiled       
     echo -e "  4 - Install Windows source     Install Windows source into " $win_source                      
-    echo -e "  5 - Install Linux tools        Install common Linux tools into " $tools_path  
+    echo -e "  5 - Install Linux tools        Install common Linux tools into " $tools_path  # remove?
     echo -e "  6 - Instal BOFs                Install Cobalt Strike agressor scripts into " $agressor_path      
     echo -e "  7 - Payload Creation           Install tools for payload creation/modification into" $payload_creation                      
     echo -e "  8 - Start BloodHound           Start Neo4j and BloodHound (installs if not already installed)"
