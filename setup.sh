@@ -24,6 +24,13 @@ setup() {
     apt install -y python3-pip 
     mkdir $agressor_path
     cp loader.cna $agressor_path/loader.cna
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    # TODO - configure oh my zsh
+    # sed -i 's/ZSH_THEME=\"\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
+    # https://github.com/zsh-users/zsh-autosuggestions
+    # https://github.com/agkozak/zsh-z
+    # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
+    
 }
 
 check_go(){
@@ -358,10 +365,8 @@ install_wl() {
 }
 
 add_aliases() {
-    # nmap discovery
-    # nmap detailed
-    # parse
-    # web scan
+    alias h='history'
+    alias hg='history | grep'
     alias untar='tar -xf'
     alias www='python3 -m http.server 8080'
     alias ports='netstat -tulanp'
