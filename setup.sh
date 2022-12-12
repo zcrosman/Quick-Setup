@@ -22,15 +22,31 @@ setup() {
     apt update 
     apt install -y git-all 
     apt install -y python3-pip 
-    mkdir $agressor_path
-    cp loader.cna $agressor_path/loader.cna
+    add_aliases
+    #zsh_setup
+}
+
+zsh_setup(){
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     # TODO - configure oh my zsh
-    # sed -i 's/ZSH_THEME=\"\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
+    sed -i 's/ZSH_THEME=\"\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
+    
     # https://github.com/zsh-users/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    # QOL - Manually add to history long, command commands?
+    echo "Adding \"History\" for auto suggestions"
+    mv ~/.zshrchistory ~/.zshrchistory.bak
+    cat fake_history ~/zshrc_history > ~/.zshrc_history
+
     # https://github.com/agkozak/zsh-z
+    git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
     
+
+    # TODO - Finish testing
+    # TODO - Update the plugins in ~/.zshrc
+    # plugins=( git zsh-autosuggestions z )
+
 }
 
 check_go(){
@@ -56,6 +72,9 @@ install_go(){
 install_BOFs() {
     # Agressor Scripts Download
     echo -e "\n\n\n Installing agressor scripts in " $agressor_path
+    mkdir $agressor_path
+    ln -s $agressor_path ~/Documents/BOFs
+    cp loader.cna $agressor_path/loader.cna
     git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness 
     git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF 
     git clone https://github.com/rasta-mouse/Aggressor-Script.git $agressor_path/Rasta-agressor-scripts 
@@ -355,6 +374,7 @@ win_binaries(){
 }
 
 install_wl() {
+    ln -s /usr/share/wordlists ~/Documents/wordlists
     cd /usr/share/wordlists
     gzip -dq /usr/share/wordlists/rockyou.txt.gz 
     # Add additional wordlists
@@ -445,6 +465,11 @@ payload_creation () {
     cd $tools_path/Freeze
     go build Freeze 
 
+    # Shhhloader
+    git clone https://github.com/icyguider/Shhhloader.git $tools_path/Shhhloader
+    cd $tools_path/Shhhloader
+    python3 -m pip install -r requirements.txt
+
 }
 
 menu () {
@@ -487,6 +512,7 @@ options() {
                 8) check_bh;;
                 9) add_aliases;;
                 w) option_wl;;
+                z) zsh_setup;;
                 x) exit;;  
             esac
         else menu
