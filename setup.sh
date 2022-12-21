@@ -23,10 +23,11 @@ setup() {
     apt install -y git-all 
     apt install -y python3-pip 
     add_aliases
-    zsh_setup
+    #zsh_setup
 }
 
 zsh_setup(){
+    # TODO remove auto zsh start
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     # TODO - configure oh my zsh
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
@@ -46,7 +47,7 @@ zsh_setup(){
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
     # plugins=( git zsh-autosuggestions z )
-    
+
 
 }
 
