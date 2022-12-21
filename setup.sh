@@ -23,20 +23,20 @@ setup() {
     apt install -y git-all 
     apt install -y python3-pip 
     add_aliases
-    #zsh_setup
+    zsh_setup
 }
 
 zsh_setup(){
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
     # TODO - configure oh my zsh
-    sed -i 's/ZSH_THEME=\"\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
+    sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
     
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
     echo "Adding \"History\" for auto suggestions"
-    mv ~/.zshrchistory ~/.zshrchistory.bak
-    cat fake_history ~/zshrc_history > ~/.zshrc_history
+    cp ~/.zshrchistory ~/.zshrchistory.bak
+    cat fake_history ~/zshrc_history >> ~/.zshrc_history
 
     # https://github.com/agkozak/zsh-z
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
@@ -46,6 +46,7 @@ zsh_setup(){
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
     # plugins=( git zsh-autosuggestions z )
+    
 
 }
 
@@ -56,7 +57,6 @@ check_go(){
     else
         echo -e "\nGo already installed\n\n"
     fi
-    
 }
 
 install_go(){
@@ -93,6 +93,13 @@ install_BOFs() {
     git clone https://github.com/cube0x0/LdapSignCheck.git $agressor_path/LdapSignCheck
     git clone https://github.com/boku7/injectEtwBypass.git $agressor_path/injectEtwBypass
     git clone https://github.com/cube0x0/BofRoast.git $agressor_path/BofRoast
+    git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks    
+
+
+    git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
+    cd $agressor_path
+    ./setup.sh
+
 
     #todo build
     git clone https://github.com/rvrsh3ll/BOF_Collection $agressor_path/rvrsh3ll-BOF_Collection
@@ -159,11 +166,6 @@ install_tools() {
     cd WebclientServiceScanner2
     python3 setup.py install 
 
-    # PEASS
-    # TODO - add PEASS binaries to binaries folder
-    echo -e "Installing PEASS\n"
-    git clone https://github.com/carlospolop/PEASS-ng.git $tools_path/PEASS 
-
     # Kerbrute
     echo -e "Installing Kerbrute\n"
     go get github.com/ropnop/kerbrute 
@@ -221,12 +223,22 @@ install_tools() {
     cd $tools_path/Certipy
     python3 setup.py install
 
-    #git clone https://github.com/unode/firefox_decrypt $tools_path/firefox_decrypt
+    git clone https://github.com/unode/firefox_decrypt $tools_path/firefox_decrypt
 
     echo -e "Installing noPac\n"
     git clone https://github.com/Ridter/noPac.git $tools_path/noPac 
     cd $tools_path/noPac
     python3 -m pip install -r requirements.txt 
+
+    # Go365
+    git clone https://github.com/optiv/Go365.git $tools_path/Go365
+    cd $tools_path/Go365
+    go build Go365.go
+
+    # TrevorSpray
+    pip install git+https://github.com/blacklanternsecurity/trevorproxy
+    pip install git+https://github.com/blacklanternsecurity/trevorspray
+
     
     
 

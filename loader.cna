@@ -1,13 +1,11 @@
 # Scripts to load
 @scripts_to_load = @(
         "/opt/BOFs/BOFNET/build/dist/net40/bofnet.cna",
-        "/opt/BOFs/bokuloader/BokuLoader.cna",
         "/opt/BOFs/CS-Remote-OPs-BOF/Remote/Remote.cna",
         "/opt/BOFs/CS-Remote-OPs-BOF/Injection/Injection.cna",
         "/opt/BOFs/CS-Situational-Awareness/SA/SA.cna",
         "/opt/BOFs/CredBandit/credBandit/MiniDumpWriteDump.cna",
         "/opt/BOFs/HelpColor/HelpColor.cna",
-        "/opt/BOFs/Rasta-agressor-scripts/loader.cna",
         "/opt/BOFs/nanodump/NanoDump.cna",
         "/opt/BOFs/unhook/unhook.cna",
         "/opt/BOFs/harleyQu1nn-agressor-scripts/ProcessColor.cna",
@@ -20,7 +18,9 @@
         "/opt/BOFs/RiccardoAncarani-BOFs/cat/cat.cna",
         "/opt/BOFs/LdapSignCheck/BofLdapSignCheck/BofLdapSignCheck.cna",
         "/opt/BOFs/injectEtwBypass/injectEtwBypass.cna",
-        "/opt/BOFs/BofRoast/BofRoast/BofRoast.cna"
+        "/opt/BOFs/BofRoast/BofRoast/BofRoast.cna",
+        "/opt/BOFs/Cobalt-clip/cobaltclip.cna",
+        "/opt/BOFs/DetectHooks/Deteck-Hooks/detect-hooks.cna"
 );
 
 # Java packages
