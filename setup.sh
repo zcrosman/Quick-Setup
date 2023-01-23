@@ -27,8 +27,10 @@ setup() {
 }
 
 zsh_setup(){
-    # TODO remove auto zsh start
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+    wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    # patch to remove auto start zsh
+    sed '/exec zsh -l/d' install.sh
+    ./install.sh
     # TODO - configure oh my zsh
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
     
@@ -48,7 +50,7 @@ zsh_setup(){
     # TODO - Update the plugins in ~/.zshrc
     # plugins=( git zsh-autosuggestions z )
 
-
+    exec zsh -l
 }
 
 check_go(){
@@ -95,8 +97,6 @@ install_BOFs() {
     git clone https://github.com/boku7/injectEtwBypass.git $agressor_path/injectEtwBypass
     git clone https://github.com/cube0x0/BofRoast.git $agressor_path/BofRoast
     git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks    
-
-
     git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
     cd $agressor_path
     ./setup.sh
@@ -127,10 +127,8 @@ install_BOFs() {
 install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
     #Submime
-    #wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null 
     echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list 
-    #apt-get -y install apt-transport-https
     apt-get update 
     apt-get -y install sublime-text 
 
@@ -231,6 +229,20 @@ install_tools() {
     cd $tools_path/noPac
     python3 -m pip install -r requirements.txt 
 
+    # echo -e "Install Pcredz"
+    # apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
+    # wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
+    # tar -xf Python-3.9.1.tgz
+    # cd Python-3.9.1
+    # ./configure --enable-optimizations
+    # make -j 12
+    # make altinstall
+
+    # GoWitness
+    git clone https://github.com/sensepost/gowitness.git $tools_path/GoWitness
+    cd $tools_path/GoWitness
+    go build gowitness
+
     # Go365
     git clone https://github.com/optiv/Go365.git $tools_path/Go365
     cd $tools_path/Go365
@@ -240,8 +252,12 @@ install_tools() {
     pip install git+https://github.com/blacklanternsecurity/trevorproxy
     pip install git+https://github.com/blacklanternsecurity/trevorspray
 
-    
-    
+    # CrackHound
+    git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
+    cd $tools_path/CrackHound
+    python3 -m pip install -r requirements.txt
+
+
 
 
     # Powershell Tools
@@ -288,25 +304,25 @@ cme_config() {
     sed -i 's/Pwn3d/Admin Access/g' $conf
     sed -i 's/audit_mode =/audit_mode = */g' $conf
 
-    read -p "Neo4j Username: " neo4j_usr
-    read -sp "Neo4j Password: " neo4j_pwd
+    # read -p "Neo4j Username: " neo4j_usr
+    # read -sp "Neo4j Password: " neo4j_pwd
 
     # Update cme/bh integration
     sed -i 's/bh_enabled = False/bh_enabled = True/g' $conf
     sed -i 's/bh_uri = 127.0.0.1/bh_uri = 127.0.0.1/g' $conf
     sed -i 's/bh_port = 7687/bh_port = 7687/g' $conf
-    sed -i 's/bh_user = neo4j/bh_user = '$neo4j_usr'/g' $conf
-    sed -i 's/bh_pass = neo4j/bh_pass = '$neo4j_pwd'/g' $conf
+    # sed -i 's/bh_user = neo4j/bh_user = '$neo4j_usr'/g' $conf
+    # sed -i 's/bh_pass = neo4j/bh_pass = '$neo4j_pwd'/g' $conf
 }
 
 
 install_bh() {
     # BloodHound
     mkdir $tools_path/BloodHound-All
-    wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_4.1.zip 
-    wget https://github.com/BloodHoundAD/BloodHound/releases/tag/4.0.3 -O $tools_path/BloodHound-All/BloodHound_4.0.3.zip 
+    wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_current.zip 
+    wget https://github.com/BloodHoundAD/BloodHound/releases/download/4.0.3/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_4.0.3.zip 
     cd $tools_path/BloodHound-All
-    unzip BloodHound_4.1.zip 
+    unzip BloodHound_current.zip 
     unzip BloodHound_4.0.3.zip 
 
     # initialize cme to create cme.conf file
@@ -321,8 +337,8 @@ install_bh() {
         cme_config
     fi
 
-    echo 'Adding custom Bloodhound queries'
-    wget https://raw.githubusercontent.com/hausec/Bloodhound-Custom-Queries/master/customqueries.json -o ~/.config/bloodhound/customqueries.json 
+    echo 'Adding custom Bloodhound queries (Hausec + CrackHound)'
+    cp $tools_path/Quick-Setup/customqueries.json ~/.config/bloodhound/customqueries.json 
 
 
     # Neo4j
@@ -400,17 +416,11 @@ install_wl() {
 add_aliases() {
     alias h='history'
     alias hg='history | grep'
-    alias untar='tar -xf'
     alias www='python3 -m http.server 8080'
     alias ports='netstat -tulanp'
-    alias cheatsheet='echo "\nList of long commands to copy and paste \
-    \n\nDiscovery\n---------------\n nmap -Pn -n -sS -p 21-23,25,53,88,111,137,139,445,80,443,3389,8443,8080 -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapdiscovery -vvv --open -iL targets.txt \
-    \n\nFull Scan\n---------------\n nmap -Pn -n -sS -p- -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA ~/Scans/nmapfull -vvv --open -iL targets-live.txt \
-    \n\nFerox\n---------------\n feroxbuster --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0\" -k -T 3 --scan-limit 10 --rate-limit 50 -x html,txt,php -C 400,500,404 -w /usr/share/wordlists/Karanxa-Bug-Bounty/all_fuzz.txt -u https://www.example.com \
-    \n\nCME\n---------------\n docker run -it --entrypoint=/bin/sh --name crackmapexec -v ~/.cme:/root/.cme Porchetta-Industries/crackmapexe\n docker exec -it crackmapexec sh \
-    \n\n"'
+
 }
-ß
+
 payload_creation () {
     #packmypayload
     echo -e "Installing PackMyPayload\n"
@@ -433,7 +443,7 @@ payload_creation () {
     #uru
     git clone https://github.com/guervild/uru.git $tools_path/uru 
     cd $tools_path/uru
-    go install mvdan.cc/garble@latest 
+    go install mvdan.cc/garble@v0.8.0 
     go get github.com/C-Sto/BananaPhone 
     go install github.com/guervild/uru@latest 
 
@@ -515,8 +525,8 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;install_wl;add_aliases;;
-                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;add_aliases;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;install_wl;zsh_setup;;
+                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;zsh_setup;;
                 3) win_source;;
                 4) win_binaries;;
                 5) setup;check_go;install_tools;;
