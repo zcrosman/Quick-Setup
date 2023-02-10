@@ -7,7 +7,7 @@ powershell_scripts='/opt/powershell'
 tools_path='/opt'
 win_source='/opt/Windows/Source'
 win_compiled='/opt/Windows/Compiled'
-payload_mod='/opt'   
+payload_mod='/opt/payloads'   
 
 check_user() {
 if [ "$EUID" -ne 0 ]
@@ -31,9 +31,9 @@ zsh_setup(){
     # patch to remove auto start zsh
     sed '/exec zsh -l/d' install.sh
     ./install.sh
-    # TODO - configure oh my zsh
+
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
-    
+    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions )/g'
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
@@ -230,13 +230,9 @@ install_tools() {
     python3 -m pip install -r requirements.txt 
 
     # echo -e "Install Pcredz"
-    # apt install -y build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev libsqlite3-dev wget libbz2-dev
-    # wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz
-    # tar -xf Python-3.9.1.tgz
-    # cd Python-3.9.1
-    # ./configure --enable-optimizations
-    # make -j 12
-    # make altinstall
+    git clone https://github.com/lgandx/PCredz.git $tools_path/Pcredz
+    cd $tools_path/Pcredz
+    docker build -t pcredz .
 
     # GoWitness
     git clone https://github.com/sensepost/gowitness.git $tools_path/GoWitness
@@ -252,13 +248,33 @@ install_tools() {
     pip install git+https://github.com/blacklanternsecurity/trevorproxy
     pip install git+https://github.com/blacklanternsecurity/trevorspray
 
+    # CME for docker backup
+    git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
+    cd $tools_path/CrackMapExec
+    docker build -t CrackMapExec .
+    
+    # pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
+    git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
+    cd $tools_path/MANSPIDER
+    python3 -m pip install -r requirements.txt
+    python3 -m pip install textract
+    apt install -y tesseract-ocr antiword
+
+
     # CrackHound
     git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
     cd $tools_path/CrackHound
     python3 -m pip install -r requirements.txt
 
+    # Plumhound
+    git clone https://github.com/PlumHound/PlumHound.git $tools_path/Plumhound
+    cd $tools_path/Plumhound
+    python3 -m pip install -r requirements.txt
 
-
+    # Max
+    git clone https://github.com/knavesec/Max.git $tools_path/Max
+    cd $tools_path/Max
+    python3 -m pip install -r requirements.txt
 
     # Powershell Tools
     #PowerSploit (PowerView, PowerUp, etc)
@@ -297,7 +313,7 @@ check_bh() {
 
 
 cme_config() {
-    conf='/root/.cme/cme.conf'
+    conf='~/.cme/cme.conf'
     echo "Updating CME config in "$conf
 
     # For "professional" screenshots
@@ -322,8 +338,8 @@ install_bh() {
     wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_current.zip 
     wget https://github.com/BloodHoundAD/BloodHound/releases/download/4.0.3/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_4.0.3.zip 
     cd $tools_path/BloodHound-All
-    unzip BloodHound_current.zip 
-    unzip BloodHound_4.0.3.zip 
+    unzip BloodHound_current.zip -d BloodHound_current
+    unzip BloodHound_4.0.3.zip -d BloodHound_old
 
     # initialize cme to create cme.conf file
     # edit cme.conf to integrate with cme
@@ -342,6 +358,8 @@ install_bh() {
 
 
     # Neo4j
+    # Update to share with team
+    sed -i -e '/#dbms.connectors.default_listen_address/s/^#//' /etc/neo4j/neo4j.conf
     # wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add - 
     # echo 'deb https://debian.neo4j.com stable 4.0' > /etc/apt/sources.list.d/neo4j.list 
     # apt-get update 
@@ -386,7 +404,12 @@ win_source() {
 win_binaries(){
     echo -e "\n\n\n Installing Windows binaries\n\n\n"
 
-    # SharPersist 1.0.1 (Jan 2020)
+    # 
+
+    # Snaffler
+    wget https://github.com/SnaffCon/Snaffler/releases/download/1.0.96/Snaffler.exe -O $win_compiled/Snaffler 
+
+    # SharPersist
     wget https://github.com/mandiant/SharPersist/releases/download/v1.0.1/SharPersist.exe -O $win_compiled/SharPersist 
 
     # LaZagne
@@ -422,10 +445,11 @@ add_aliases() {
 }
 
 payload_creation () {
+    mkdir $payload_mod
     #packmypayload
     echo -e "Installing PackMyPayload\n"
-    git clone https://github.com/mgeeky/PackMyPayload.git $tools_path/packmypayload 
-    cd $tools_path/packmypayload
+    git clone https://github.com/mgeeky/PackMyPayload.git $payload_mod/packmypayload 
+    cd $payload_mod/packmypayload
     pip install --upgrade pip setuptools wheel 
     python3 -m pip install -r requirements.txt 
 
@@ -439,26 +463,31 @@ payload_creation () {
 
     #nimcrypt
     # TODO setup nim
+    
+    # bankai
+    git clone https://github.com/bigB0sss/bankai.git $payload_mod/bankai
+    cd $payload_mod/bankai
+    GO111MODULE=off go build bankai.go
 
     #uru
-    git clone https://github.com/guervild/uru.git $tools_path/uru 
-    cd $tools_path/uru
+    git clone https://github.com/guervild/uru.git $payload_mod/uru 
+    cd $payload_mod/uru
     go install mvdan.cc/garble@v0.8.0 
     go get github.com/C-Sto/BananaPhone 
     go install github.com/guervild/uru@latest 
 
     #ftp
-    git clone https://github.com/Unknow101/FuckThatPacker.git $tools_path/ftp 
+    git clone https://github.com/Unknow101/FuckThatPacker.git $payload_mod/ftp 
 
     # AVSignSeek (not payload creation, but used to detect where binary/paload is triggered in AV)
-    git clone https://github.com/hegusung/AVSignSeek.git $tools_path/AVSignSeek 
+    git clone https://github.com/hegusung/AVSignSeek.git $payload_mod/AVSignSeek 
 
     # darkarmour
-    git clone https://github.com/bats3c/darkarmour $tools_path/darkarmour 
+    git clone https://github.com/bats3c/darkarmour $payload_mod/darkarmour 
     apt -y install mingw-w64-tools mingw-w64-common g++-mingw-w64 gcc-mingw-w64 upx-ucl osslsigncode 
     
     # ScareCrow
-    git clone https://github.com/optiv/ScareCrow.git $tools_path/ScareCrow 
+    git clone https://github.com/optiv/ScareCrow.git $payload_mod/ScareCrow 
     go get github.com/fatih/color 
     go get github.com/yeka/zip 
     go get github.com/josephspurrier/goversioninfo 
@@ -469,27 +498,27 @@ payload_creation () {
     pip3 install donut-shellcode 
 
     # Ruler
-    git clone https://github.com/sensepost/ruler.git $tools_path/ruler 
+    git clone https://github.com/sensepost/ruler.git $payload_mod/ruler 
 
     #Morph-HTA
-    git clone https://github.com/vysecurity/morphHTA.git $tools_path/morphHTA 
+    git clone https://github.com/vysecurity/morphHTA.git $payload_mod/morphHTA 
 
     # Invoke-Obfuscation
-    git clone https://github.com/danielbohannon/Invoke-Obfuscation.git $tools_path/Invoke-Obfuscation 
+    git clone https://github.com/danielbohannon/Invoke-Obfuscation.git $payload_mod/Invoke-Obfuscation 
 
     #mangle
-    git clone https://github.com/optiv/Mangle.git $tools_path/mangle 
+    git clone https://github.com/optiv/Mangle.git $payload_mod/mangle 
     cd $tools_path/mangle
     go get github.com/Binject/debug/pe 
     go install github.com/optiv/Mangle@latest 
  
     # Freeze
-    git clone https://github.com/optiv/Freeze.git $tools_path/Freeze 
+    git clone https://github.com/optiv/Freeze.git $payload_mod/Freeze 
     cd $tools_path/Freeze
     go build Freeze 
 
     # Shhhloader
-    git clone https://github.com/icyguider/Shhhloader.git $tools_path/Shhhloader
+    git clone https://github.com/icyguider/Shhhloader.git $payload_mod/Shhhloader
     cd $tools_path/Shhhloader
     python3 -m pip install -r requirements.txt
 
@@ -504,9 +533,9 @@ menu () {
     echo -e "  2 - Install All                Run all of the commands below (1-5)"    
     echo -e "  3 - Install Windows binaries   Install Windows binaries into " $win_compiled       
     echo -e "  4 - Install Windows source     Install Windows source into " $win_source                      
-    echo -e "  5 - Install Linux tools        Install common Linux tools into " $tools_path  # remove?
+    echo -e "  5 - Install Linux tools        Install common Linux tools into " $tools_path
     echo -e "  6 - Instal BOFs                Install Cobalt Strike agressor scripts into " $agressor_path      
-    echo -e "  7 - Payload Creation           Install tools for payload creation/modification into" $payload_creation                      
+    echo -e "  7 - Payload Creation           Install tools for payload creation/modification into" $payload_mod                    
     echo -e "  8 - Start BloodHound           Start Neo4j and BloodHound (installs if not already installed)"
     echo -e "  9 - Add aliases (TODO)         TODO"
     echo -e "  w - Install wordlists (TODO)   Install additional wordlists"
