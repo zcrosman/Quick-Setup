@@ -1,6 +1,3 @@
-#!/usr/bin/env bash
-
-
 #PATHS
 agressor_path='/opt/BOFs'
 powershell_scripts='/opt/powershell'
@@ -41,7 +38,6 @@ zsh_setup(){
     cp ~/.zshrchistory ~/.zshrchistory.bak
     cat fake_history ~/zshrc_history >> ~/.zshrc_history
 
-    # https://github.com/agkozak/zsh-z
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
     
@@ -76,7 +72,7 @@ install_BOFs() {
     # Agressor Scripts Download
     echo -e "\n\n\n Installing agressor scripts in " $agressor_path
     mkdir $agressor_path
-    ln -s $agressor_path ~/Documents/BOFs
+    ln -s $agressor_path ~/BOFs
     cp loader.cna $agressor_path/loader.cna
     git clone https://github.com/trustedsec/CS-Situational-Awareness-BOF.git $agressor_path/CS-Situational-Awareness 
     git clone https://github.com/trustedsec/CS-Remote-OPs-BOF.git $agressor_path/CS-Remote-OPs-BOF 
@@ -95,11 +91,15 @@ install_BOFs() {
     git clone https://github.com/RiccardoAncarani/BOFs.git $agressor_path/RiccardoAncarani-BOFs 
     git clone https://github.com/cube0x0/LdapSignCheck.git $agressor_path/LdapSignCheck
     git clone https://github.com/boku7/injectEtwBypass.git $agressor_path/injectEtwBypass
-    git clone https://github.com/cube0x0/BofRoast.git $agressor_path/BofRoast
+    #git clone https://github.com/cube0x0/BofRoast.git $agressor_path/BofRoast
     git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks    
     git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
-    cd $agressor_path
-    ./setup.sh
+    git clone https://github.com/outflanknl/C2-Tool-Collection.git $agressor_path/outflank-tool-collection
+    cd $agressor_path/outflank-tool-collection/BOF
+    make all
+    git clone https://github.com/ajpc500/BOFs.git $agressor_path/ajpc500-bofs
+    # cd $agressor_path
+    # ./setup.sh
 
 
     #todo build
@@ -146,9 +146,6 @@ install_tools() {
     echo -e "Installing Bloodhound.py\n"
     git clone https://github.com/fox-it/BloodHound.py.git $tools_path/BloodHound_NEW.py 
 
-    #Amass
-    echo -e "Installing Amass\n"
-    go install -v github.com/OWASP/Amass/v3/...@master  
 
     echo -e "Installing PRET\n"
     pip install colorama pysnmp 
@@ -180,11 +177,9 @@ install_tools() {
     echo -e "Installing DonPAPI\n"
     git clone https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI 
     python3 -m pip install -r $tools_path/DonPAPI/requirements.txt 
-    
-    # Eyewitness
-    # git clone https://github.com/FortyNorthSecurity/EyeWitness.git $tools_path/EyeWitness
-    # cd $tools_path/EyeWitness/Python/setup
-    # ./setup.sh
+
+    # ntlm_theft
+    git clone https://github.com/Greenwolf/ntlm_theft.git $tools_path/ntlm_theft
 
     # Aquatone
     echo -e "Installing Aquatone\n"
@@ -248,6 +243,10 @@ install_tools() {
     pip install git+https://github.com/blacklanternsecurity/trevorproxy
     pip install git+https://github.com/blacklanternsecurity/trevorspray
 
+    wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration
+    cd $tools_path/TeamFiltration 
+    unzip TeamFiltration-Linux-v3.5.0.zip 
+
     # CME for docker backup
     git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
     cd $tools_path/CrackMapExec
@@ -292,11 +291,22 @@ install_tools() {
     # PrivescCheck
     echo -e "Installing PrivescCheck\n"
     git clone https://github.com/itm4n/PrivescCheck.git $powershell/PrivescCheck 
+
+
+
+    # WEB Stuff
+    go install github.com/tomnomnom/waybackurls@latest
+    go install github.com/tomnomnom/httprobe@latest
+    go get -u github.com/tomnomnom/assetfinder
+    go install github.com/tomnomnom/meg@latest
+    go get -u github.com/tomnomnom/gf
+
+    echo -e "Installing Amass\n"
+    go install -v github.com/OWASP/Amass/v3/...@master  
 }
 
 check_bh() {
     # check if bloodhound installed
-    
     DIR=$tools_path'/BloodHound'
     echo $DIR
     if [ -d $tools_path'/BloodHound' ]
@@ -404,7 +414,8 @@ win_source() {
 win_binaries(){
     echo -e "\n\n\n Installing Windows binaries\n\n\n"
 
-    # 
+    # SharpShares
+    wget https://github.com/mitchmoser/SharpShares/releases/download/v2.4/SharpShares.exe -O $win_compiled/SharpShares 
 
     # Snaffler
     wget https://github.com/SnaffCon/Snaffler/releases/download/1.0.96/Snaffler.exe -O $win_compiled/Snaffler 
@@ -423,10 +434,15 @@ win_binaries(){
     cd $win_compiled/SharpHound
     unzip SharpHound.zip 
 
+    # TeamFiltration
+    wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip  -O $win_compiled/TeamFiltration
+    cd $win_compiled/TeamFiltration 
+    unzip  TeamFiltration-Linux-v3.5.0.zip 
+
 }
 
 install_wl() {
-    ln -s /usr/share/wordlists ~/Documents/wordlists
+    ln -s /usr/share/wordlists ~/wordlists
     cd /usr/share/wordlists
     gzip -dq /usr/share/wordlists/rockyou.txt.gz 
     # Add additional wordlists
@@ -437,11 +453,8 @@ install_wl() {
 }
 
 add_aliases() {
-    alias h='history'
-    alias hg='history | grep'
-    alias www='python3 -m http.server 8080'
-    alias ports='netstat -tulanp'
 
+    #cp my-aliases.zsh ~/.oh-my-zsh/plugins/my-aliases/my-aliases.plugin.zsh
 }
 
 payload_creation () {

@@ -18,9 +18,20 @@
         "/opt/BOFs/RiccardoAncarani-BOFs/cat/cat.cna",
         "/opt/BOFs/LdapSignCheck/BofLdapSignCheck/BofLdapSignCheck.cna",
         "/opt/BOFs/injectEtwBypass/injectEtwBypass.cna",
-        "/opt/BOFs/BofRoast/BofRoast/BofRoast.cna",
         "/opt/BOFs/Cobalt-clip/cobaltclip.cna",
-        "/opt/BOFs/DetectHooks/Deteck-Hooks/detect-hooks.cna"
+        "/opt/BOFs/DetectHooks/Deteck-Hooks/detect-hooks.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/AddMachineAccount/MachineAccounts.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/SprayAD/SprayAD.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/StartWebClient/StartWebClient.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/Psk/Psk.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/Psx/Psx.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/Psc/Psc.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/Lapsdump/Lapsdump.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/PetitPotam/PetitPotam.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/Kerberoast/Kerberoast.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/DomainInfo/DomainInfo.cna",
+        "/opt/BOFs/outflank-tool-collection/BOF/Klist/Klist.cna",
+        "/opt/BOFs/ajpc500-bofs/BOFs/ETW/etw.cna"
 );
 
 # Java packages
