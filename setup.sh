@@ -157,11 +157,6 @@ install_tools() {
     cd WebclientServiceScanner
     python3 setup.py install 
 
-    # for testing
-    git clone https://github.com/zcrosman/WebclientServiceScanner.git $tools_path/WebclientServiceScanner-custom
-    cd WebclientServiceScanner2
-    python3 setup.py install 
-
     # Kerbrute
     echo -e "Installing Kerbrute\n"
     go get github.com/ropnop/kerbrute 
@@ -251,6 +246,12 @@ install_tools() {
     git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
     cd $tools_path/CrackMapExec
     docker build -t CrackMapExec .
+
+    # nuclei
+    go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+
+    # arsenal
+    python3 -m pip install arsenal-cli
     
     # pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
     git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
@@ -453,7 +454,7 @@ install_wl() {
 }
 
 add_aliases() {
-
+    echo test
     #cp my-aliases.zsh ~/.oh-my-zsh/plugins/my-aliases/my-aliases.plugin.zsh
 }
 

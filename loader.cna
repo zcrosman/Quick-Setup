@@ -19,7 +19,7 @@
         "/opt/BOFs/LdapSignCheck/BofLdapSignCheck/BofLdapSignCheck.cna",
         "/opt/BOFs/injectEtwBypass/injectEtwBypass.cna",
         "/opt/BOFs/Cobalt-clip/cobaltclip.cna",
-        "/opt/BOFs/DetectHooks/Deteck-Hooks/detect-hooks.cna",
+        "/opt/BOFs/Detect-Hooks/Deteck-Hooks/detect-hooks.cna",
         "/opt/BOFs/outflank-tool-collection/BOF/AddMachineAccount/MachineAccounts.cna",
         "/opt/BOFs/outflank-tool-collection/BOF/SprayAD/SprayAD.cna",
         "/opt/BOFs/outflank-tool-collection/BOF/StartWebClient/StartWebClient.cna",

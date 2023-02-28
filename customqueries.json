@@ -847,7 +847,7 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "MATCH p=(u:User (owned: True))-[r:SQLAdmin]->(c:Computer) return p"
+					"query": "MATCH p=(u:User {owned: True})-[r:SQLAdmin]->(c:Computer) return p"
                 }
 			]
 		},
