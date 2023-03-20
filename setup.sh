@@ -441,6 +441,7 @@ win_binaries(){
     # SharPersist
     wget https://github.com/mandiant/SharPersist/releases/download/v1.0.1/SharPersist.exe -P $win_compiled
 
+
     # LaZagne
     wget https://github.com/AlessandroZ/LaZagne/releases/download/2.4.3/lazagne.exe -P $win_compiled
 
