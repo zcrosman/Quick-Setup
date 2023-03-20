@@ -21,13 +21,18 @@ setup() {
     apt install -y python3-pip 
     add_aliases
     #zsh_setup
+    
+    # For docker
+    apt-get install wget
+    apt install zip -y
 }
 
 zsh_setup(){
-    wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+    cd ~
+    wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O zsh-install.sh
     # patch to remove auto start zsh
-    sed '/exec zsh -l/d' install.sh
-    ./install.sh
+    sed '/exec zsh -l/d' zsh-install.sh
+    ./zsh-install.sh
 
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
     sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions )/g'
@@ -114,8 +119,8 @@ install_BOFs() {
     apt-get update 
     apt-get install -y dotnet-sdk-5.0 
     git clone https://github.com/williamknows/BOF.NET.git $agressor_path/BOFNET 
-    mkdir $BOFs/BOFNET/build 
-    cd $BOFs/BOFNET/build 
+    mkdir $agressor_path/BOFNET/build 
+    cd $agressor_path/BOFNET/build 
     apt install -y cmake 
     cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=../toolchain/Linux-mingw64.cmake .. 
     cmake --build . 
@@ -134,6 +139,7 @@ install_tools() {
 
     #BloodHound
     check_bh
+
 
     # mitm6
     echo -e "Installing mitm6\n"
@@ -224,6 +230,10 @@ install_tools() {
     cd $tools_path/Pcredz
     docker build -t pcredz .
 
+    # flamingo
+    go get -u -v github.com/atredispartners/flamingo
+    go install -v github.com/atredispartners/flamingo
+
     # GoWitness
     git clone https://github.com/sensepost/gowitness.git $tools_path/GoWitness
     cd $tools_path/GoWitness
@@ -238,8 +248,7 @@ install_tools() {
     pip install git+https://github.com/blacklanternsecurity/trevorproxy
     pip install git+https://github.com/blacklanternsecurity/trevorspray
 
-    wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration
-    cd $tools_path/TeamFiltration 
+    wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration-Linux-v3.5.0.zip
     unzip TeamFiltration-Linux-v3.5.0.zip 
 
     # CME for docker backup
@@ -276,6 +285,11 @@ install_tools() {
     cd $tools_path/Max
     python3 -m pip install -r requirements.txt
 
+    # Passhound
+    git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
+    cd $tools_path/Max
+    python3 -m pip install -r requirements.txt
+
     # Powershell Tools
     #PowerSploit (PowerView, PowerUp, etc)
     echo -e "Installing PowerSploit\n"
@@ -291,7 +305,7 @@ install_tools() {
 
     # PrivescCheck
     echo -e "Installing PrivescCheck\n"
-    git clone https://github.com/itm4n/PrivescCheck.git $powershell/PrivescCheck 
+    git clone https://github.com/itm4n/PrivescCheck.git $powershell_scripts/PrivescCheck 
 
 
 
@@ -416,29 +430,35 @@ win_binaries(){
     echo -e "\n\n\n Installing Windows binaries\n\n\n"
 
     # SharpShares
-    wget https://github.com/mitchmoser/SharpShares/releases/download/v2.4/SharpShares.exe -O $win_compiled/SharpShares 
+    wget https://github.com/mitchmoser/SharpShares/releases/download/v2.4/SharpShares.exe -P $win_compiled
 
     # Snaffler
-    wget https://github.com/SnaffCon/Snaffler/releases/download/1.0.96/Snaffler.exe -O $win_compiled/Snaffler 
+    wget https://github.com/SnaffCon/Snaffler/releases/download/1.0.96/Snaffler.exe -P $win_compiled
+
+    # Group3r
+    wget https://github.com/Group3r/Group3r/releases/download/1.0.53/Group3r.exe -P $win_compiled
 
     # SharPersist
-    wget https://github.com/mandiant/SharPersist/releases/download/v1.0.1/SharPersist.exe -O $win_compiled/SharPersist 
+    wget https://github.com/mandiant/SharPersist/releases/download/v1.0.1/SharPersist.exe -P $win_compiled
 
     # LaZagne
-    wget https://github.com/AlessandroZ/LaZagne/releases/download/2.4.3/lazagne.exe -O $win_compiled/lazagne.exe 
+    wget https://github.com/AlessandroZ/LaZagne/releases/download/2.4.3/lazagne.exe -P $win_compiled
 
     # GhostPack Compiled
     git clone https://github.com/r3motecontrol/Ghostpack-CompiledBinaries.git $win_compiled/GhostPack 
 
     # SharpHound
-    wget https://github.com/BloodHoundAD/SharpHound/releases/download/v1.0.3/SharpHound-v1.0.3.zip -O $win_compiled/SharpHound/SharpHound.zip 
-    cd $win_compiled/SharpHound
-    unzip SharpHound.zip 
+    wget https://github.com/BloodHoundAD/SharpHound/releases/download/v1.0.3/SharpHound-v1.0.3.zip -P $win_compiled
+    cd $win_compiled
+    unzip SharpHound-v1.0.3.zip
 
     # TeamFiltration
-    wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip  -O $win_compiled/TeamFiltration
-    cd $win_compiled/TeamFiltration 
-    unzip  TeamFiltration-Linux-v3.5.0.zip 
+    wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Win-v3.5.0.zip  -P $win_compiled
+    cd $win_compiled
+    unzip TeamFiltration-Win-v3.5.0.zip 
+
+    # SQL Server Management Studio (SSMS)
+    wget https://aka.ms/ssmsfullsetup -P $win_compiled
 
 }
 
@@ -536,6 +556,9 @@ payload_creation () {
     cd $tools_path/Shhhloader
     python3 -m pip install -r requirements.txt
 
+    # ADMI
+    # git clone https://github.com/zcrosman/ADMI.git $payload_mod/ADMI
+
 }
 
 menu () {
@@ -562,22 +585,21 @@ menu () {
     #rerun menu?
 }
 
-# Added option funcs to make sure menu and argument options stayed consistant
 options() {
     echo "Option $1 selected"
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;install_wl;zsh_setup;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;zsh_setup;;
                 2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;zsh_setup;;
-                3) win_source;;
-                4) win_binaries;;
+                3) win_binaries;;
+                4) win_source;;
                 5) setup;check_go;install_tools;;
                 6) install_BOFs;;
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
                 9) add_aliases;;
-                w) option_wl;;
+                w) install_wl;;
                 z) zsh_setup;;
                 x) exit;;  
             esac
@@ -588,4 +610,3 @@ options() {
 # main
 check_user 
 options $1
-
