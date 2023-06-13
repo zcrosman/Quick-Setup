@@ -9,7 +9,7 @@ payload_mod='/opt/payloads'
 check_user() {
 if [ "$EUID" -ne 0 ]
     then echo -e "\nScript must be run with sudo\n"
-    echo -e "sudo ./setup.sh"
+    echo -e "sudo -E ./setup.sh"
     exit
 fi
 }
@@ -32,16 +32,17 @@ zsh_setup(){
     wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O zsh-install.sh
     # patch to remove auto start zsh
     sed '/exec zsh -l/d' zsh-install.sh
-    ./zsh-install.sh
+    chmod +x zsh-install.sh
+    echo "y" | ./zsh-install.sh
 
-    sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' /root/.zshrc
-    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions )/g'
+    sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' $HOME/.zshrc
+    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions )/g' $HOME/.zshrc
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
     echo "Adding \"History\" for auto suggestions"
-    cp ~/.zshrchistory ~/.zshrchistory.bak
-    cat fake_history ~/zshrc_history >> ~/.zshrc_history
+    # cp ~/.zshrchistory ~/.zshrchistory.bak
+    # cat fake_history ~/zshrc_history >> ~/.zshrc_history
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
@@ -51,7 +52,7 @@ zsh_setup(){
     # TODO - Update the plugins in ~/.zshrc
     # plugins=( git zsh-autosuggestions z )
 
-    exec zsh -l
+    # exec zsh -l
 }
 
 check_go(){
@@ -165,7 +166,7 @@ install_tools() {
 
     # Kerbrute
     echo -e "Installing Kerbrute\n"
-    go get github.com/ropnop/kerbrute 
+    go isntall github.com/ropnop/kerbrute@latest
 
     # pypykatz
     echo -e "Installing pypykatz\n"
@@ -231,8 +232,7 @@ install_tools() {
     docker build -t pcredz .
 
     # flamingo
-    go get -u -v github.com/atredispartners/flamingo
-    go install -v github.com/atredispartners/flamingo
+    go install -v github.com/atredispartners/flamingo@latest
 
     # GoWitness
     git clone https://github.com/sensepost/gowitness.git $tools_path/GoWitness
@@ -251,6 +251,11 @@ install_tools() {
     wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration-Linux-v3.5.0.zip
     unzip TeamFiltration-Linux-v3.5.0.zip 
 
+    # spraycharles
+    python3 -m pip install pipx
+    python3 -m pipx ensurepath
+    python3 -m pipx install spraycharles
+
     # CME for docker backup
     git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
     cd $tools_path/CrackMapExec
@@ -261,7 +266,13 @@ install_tools() {
 
     # arsenal
     python3 -m pip install arsenal-cli
+
+    #NTLMrecon
+    git clone https://github.com/pwnfoo/ntlmrecon $tools_path/ntlmrecon
+    cd $tools_path/ntlmrecon
+    python3 seteup.py install
     
+
     # pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
     git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
     cd $tools_path/MANSPIDER
@@ -269,6 +280,11 @@ install_tools() {
     python3 -m pip install textract
     apt install -y tesseract-ocr antiword
 
+
+    # Wordlist Generation
+    git clone --recurse-submodules https://github.com/r3nt0n/bopscrk $tools_path/bobscrk
+    $tools_path/bobscrk
+    python3 -m pip install -r requirements.txt
 
     # CrackHound
     git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
@@ -308,13 +324,12 @@ install_tools() {
     git clone https://github.com/itm4n/PrivescCheck.git $powershell_scripts/PrivescCheck 
 
 
-
     # WEB Stuff
     go install github.com/tomnomnom/waybackurls@latest
     go install github.com/tomnomnom/httprobe@latest
-    go get -u github.com/tomnomnom/assetfinder
+    go install github.com/tomnomnom/assetfinder@latest
     go install github.com/tomnomnom/meg@latest
-    go get -u github.com/tomnomnom/gf
+    go install github.com/tomnomnom/gf@latest
 
     echo -e "Installing Amass\n"
     go install -v github.com/OWASP/Amass/v3/...@master  
@@ -586,13 +601,27 @@ menu () {
     #rerun menu?
 }
 
+# fixes for rva vms
+
+rva-fix(){
+    # TODOs - so much
+    # Upgrade Go
+    echo "export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin" >> $HOME/.zshrc
+    source $HOME/.zshrc
+    apt install crackmapexec -y
+
+
+    
+
+}
+
 options() {
     echo "Option $1 selected"
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;zsh_setup;;
-                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;zsh_setup;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;rva;;
+                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;;
                 3) win_binaries;;
                 4) win_source;;
                 5) setup;check_go;install_tools;;
@@ -600,6 +629,7 @@ options() {
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
                 9) add_aliases;;
+                r) rva-fix;;
                 w) install_wl;;
                 z) zsh_setup;;
                 x) exit;;  
