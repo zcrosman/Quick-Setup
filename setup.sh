@@ -38,13 +38,14 @@ zsh_setup(){
 
     
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' $HOME/.zshrc
-    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions zach )/g' $HOME/.zshrc
+    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions zach copyfile )/g' $HOME/.zshrc
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
     echo "Adding \"History\" for auto suggestions"
-    cp ~/.zshrchistory ~/.zshrchistory.bak
-    cat /opt/Quick-Setup/misc/fake_history ~/zshrc_history > ~/.zshrc_history
+    cp ~/.zsh_history ~/.zsh_history.bak
+    cat /opt/Quick-Setup/misc/fake_history ~/.zsh_history > ~/.zsh_history_tmp
+    mv ~/.zsh_history_tmp ~/.zsh_history
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
     cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach.plugin.zsh
@@ -70,11 +71,11 @@ check_go(){
 
 install_go(){
     echo "\n Installling Go\n"
-    apt install -y golang 
+    # apt install -y golang 
     export GOROOT=/usr/lib/go
     export GOPATH=$HOME/go
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-    source ~/.bashrc
+    # source ~/.bashrc
     source ~/.zshrc
 }
 
@@ -330,6 +331,7 @@ install_tools() {
     echo -e "Installing PrivescCheck\n"
     git clone https://github.com/itm4n/PrivescCheck.git $powershell_scripts/PrivescCheck 
 
+    python3 -m pip install censys
 
     # WEB Stuff
     go install github.com/tomnomnom/waybackurls@latest
@@ -343,6 +345,18 @@ install_tools() {
     go install github.com/tomnomnom/unfurl@latest
     go install github.com/tomnomnom/fff@latest
     go install github.com/lc/gau@latest
+    go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+    go install github.com/projectdiscovery/uncover/cmd/uncover@latest
+
+    git clone https://github.com/sa7mon/S3Scanner.git $tools_path/s3scanner
+    cd $tools_path/s3scanner
+    go build .
+
+    # Postman
+    # mkdir $tools_path/Postman
+    # TODO get dl link
+    # tar xvzf $tools_path/Postman/Postman*.tar.gz 
+    # ln -s $tools_path/Postman/app/Postman /usr/local/bin/Postman
 
 
     echo -e "Installing Amass\n"
@@ -555,7 +569,7 @@ payload_creation () {
     go get github.com/yeka/zip 
     go get github.com/josephspurrier/goversioninfo 
     apt-get install -y openssl osslsigncode mingw-w64 
-    go build %tools_path/ScareCrow/ScareCrow.go 
+    go build $tools_path/ScareCrow/ScareCrow.go 
     
     # Donut
     pip3 install donut-shellcode 
