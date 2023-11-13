@@ -48,7 +48,8 @@ zsh_setup(){
     mv ~/.zsh_history_tmp ~/.zsh_history
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
-    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach.plugin.zsh
+    mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach
+    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach.plugin.zsh
 
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
     
@@ -628,22 +629,12 @@ menu () {
     #rerun menu?
 }
 
-# fixes for rva vms
-
-rva-fix(){
-    # TODOs - so much
-    # Upgrade Go
-    
-    # source $HOME/.zshrc
-    apt install crackmapexec -y
-}
-
 options() {
     echo "Option $1 selected"
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;rva;install_wl;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;;
                 2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;win_source;install_wl;check_bh;;
                 3) win_binaries;;
                 4) win_source;;
