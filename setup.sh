@@ -24,8 +24,8 @@ setup() {
     apt install -y python3-pip 
     #zsh_setup
     # For docker
-    apt-get install wget
-    apt install zip -y
+    # apt-get install wget
+    # apt install zip -y
 }
 
 zsh_setup(){
@@ -38,7 +38,7 @@ zsh_setup(){
 
     
     sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' $HOME/.zshrc
-    sed -i -e 's/plugins=(git)/plugins=( git z zsh-autosuggestions zach copyfile )/g' $HOME/.zshrc
+    sed -i -e 's/plugins=(git)/plugins=( z zsh-autosuggestions zach copyfile )/g' $HOME/.zshrc
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
@@ -240,7 +240,7 @@ install_tools() {
     go install -v github.com/atredispartners/flamingo@latest
 
     # GoWitness
-    git isntall https://github.com/sensepost/gowitness@latest
+    go install -v github.com/sensepost/gowitness@latest
 
     git clone https://github.com/nyxgeek/onedrive_user_enum $tools_path/onedrive_user_enum
     cd $tools_path/onedrive_user_enum
@@ -353,12 +353,14 @@ install_tools() {
     cd $tools_path/s3scanner
     go build .
 
-    # Postman
-    # mkdir $tools_path/Postman
-    # TODO get dl link
-    # tar xvzf $tools_path/Postman/Postman*.tar.gz 
-    # ln -s $tools_path/Postman/app/Postman /usr/local/bin/Postman
+    GO111MODULE=on go install github.com/jaeles-project/gospider@latest
 
+    # Postman
+    mkdir $tools_path/Postman
+    apt install snapd
+    systemctl start snapd
+    snap install core
+    snap install postman
 
     echo -e "Installing Amass\n"
     go install -v github.com/OWASP/Amass/v3/...@master  
@@ -429,7 +431,7 @@ install_bh() {
 
     # Neo4j
     # Update to share with team
-    sed -i -e '/#dbms.connectors.default_listen_address/s/^#//' /etc/neo4j/neo4j.conf
+    # -i -e '/#dbms.connectors.default_listen_address/s/^#//' /etc/neo4j/neo4j.conf
     # wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add - 
     # echo 'deb https://debian.neo4j.com stable 4.0' > /etc/apt/sources.list.d/neo4j.list 
     # apt-get update 
@@ -642,7 +644,6 @@ options() {
                 6) install_BOFs;;
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
-                r) rva-fix;;
                 w) install_wl;;
                 z) zsh_setup;;
                 x) exit;;  
