@@ -135,58 +135,16 @@ install_BOFs() {
     # TODO add custom BOFs
 }
 
-install_tools() {
-    echo -e "\n\n\n Installing Kali tools\n\n\n"
+fast () {
     #Submime
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null 
     echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list 
     apt-get update 
     apt-get -y install sublime-text 
 
-    #BloodHound
-    check_bh
-
-
-    # mitm6
-    echo -e "Installing mitm6\n"
-    git clone https://github.com/dirkjanm/mitm6.git $tools_path/mitm6 
-    #pip3 install -r $tools_path/mitm6/requirements.txt 
-    cd $tools_path/mitm6
-    python3 setup.py install 
-
-    # Bloodhound.py (Current Version)
-    echo -e "Installing Bloodhound.py\n"
-    git clone https://github.com/fox-it/BloodHound.py.git $tools_path/BloodHound_NEW.py 
-
-
-    echo -e "Installing PRET\n"
-    pip install colorama pysnmp 
-    pip install win_unicode_console 
-    git clone https://github.com/RUB-NDS/PRET $tools_path/PRET 
-
-    echo -e "Installing WebClientServiceScanner\n"
-    git clone https://github.com/Hackndo/WebclientServiceScanner.git $tools_path/WebclientServiceScanner 
-    cd WebclientServiceScanner
-    python3 setup.py install 
-
     # Kerbrute
     echo -e "Installing Kerbrute\n"
     go isntall github.com/ropnop/kerbrute@latest
-
-    # pypykatz
-    echo -e "Installing pypykatz\n"
-    git clone https://github.com/skelsec/pypykatz.git $tools_path/pypykatz 
-
-    # evilwin-rm
-    # gem install evil-winrm
-
-    # DonPAPI
-    echo -e "Installing DonPAPI\n"
-    git clone https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI 
-    python3 -m pip install -r $tools_path/DonPAPI/requirements.txt 
-
-    # ntlm_theft
-    git clone https://github.com/Greenwolf/ntlm_theft.git $tools_path/ntlm_theft
 
     # Aquatone
     echo -e "Installing Aquatone\n"
@@ -204,40 +162,12 @@ install_tools() {
     
     echo -e "Installing feroxbuster\n"
     apt install -y feroxbuster 
-    
-    echo -e "Installing ldapdomaindump\n"
-    git clone https://github.com/dirkjanm/ldapdomaindump.git $tools_path/ldapdomaindump 
-    cd $tools_path/ldapdomaindump 
-    python3 setup.py install 
-
-    echo -e "Installing DPAT\n"
-    git clone https://github.com/clr2of8/DPAT.git $tools_path/DPAT 
 
     echo -e "Installing PetitPotam\n"
     git clone https://github.com/topotam/PetitPotam.git $tools_path/PetitPotam 
 
     echo -e "Installing coercer\n"
     python3 -m pip install coercer 
-
-    echo -e "Installing Certipy\n"
-    git clone https://github.com/ly4k/Certipy.git $tools_path/Certipy
-    cd $tools_path/Certipy
-    python3 setup.py install
-
-    git clone https://github.com/unode/firefox_decrypt $tools_path/firefox_decrypt
-
-    echo -e "Installing noPac\n"
-    git clone https://github.com/Ridter/noPac.git $tools_path/noPac 
-    cd $tools_path/noPac
-    python3 -m pip install -r requirements.txt 
-
-    # echo -e "Install Pcredz"
-    git clone https://github.com/lgandx/PCredz.git $tools_path/Pcredz
-    cd $tools_path/Pcredz
-    docker build -t pcredz .
-
-    # flamingo
-    go install -v github.com/atredispartners/flamingo@latest
 
     # GoWitness
     go install -v github.com/sensepost/gowitness@latest
@@ -255,16 +185,11 @@ install_tools() {
 
     wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration-Linux-v3.5.0.zip
     unzip TeamFiltration-Linux-v3.5.0.zip 
-
+    
     # spraycharles
     python3 -m pip install pipx
     python3 -m pipx ensurepath
     python3 -m pipx install spraycharles
-
-    # CME for docker backup
-    # git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
-    # cd $tools_path/CrackMapExec
-    # docker build -t CrackMapExec .
 
     git clone https://github.com/Pennyw0rth/NetExec.git $tools_path/NetExec
     cd $tools_path/NetExec
@@ -273,64 +198,19 @@ install_tools() {
     # nuclei
     go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
 
-    # arsenal
-    python3 -m pip install arsenal-cli
-
     #NTLMrecon
     git clone https://github.com/pwnfoo/ntlmrecon $tools_path/ntlmrecon
     cd $tools_path/ntlmrecon
     python3 seteup.py install
-    
-
-    # pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
-    git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
-    cd $tools_path/MANSPIDER
-    python3 -m pip install -r requirements.txt
-    python3 -m pip install textract
-    apt install -y tesseract-ocr antiword
-
 
     # Wordlist Generation
     git clone --recurse-submodules https://github.com/r3nt0n/bopscrk $tools_path/bobscrk
     $tools_path/bobscrk
     python3 -m pip install -r requirements.txt
 
-    # CrackHound
-    git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
-    cd $tools_path/CrackHound
-    python3 -m pip install -r requirements.txt
-
-    # Plumhound
-    git clone https://github.com/PlumHound/PlumHound.git $tools_path/Plumhound
-    cd $tools_path/Plumhound
-    python3 -m pip install -r requirements.txt
-
-    # Max
-    git clone https://github.com/knavesec/Max.git $tools_path/Max
-    cd $tools_path/Max
-    python3 -m pip install -r requirements.txt
-
-    # Passhound
-    git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
-    cd $tools_path/Max
-    python3 -m pip install -r requirements.txt
-
-    # Powershell Tools
-    #PowerSploit (PowerView, PowerUp, etc)
-    echo -e "Installing PowerSploit\n"
-    git clone https://github.com/PowerShellMafia/PowerSploit.git $powershell_scripts/PowerSploit 
-
     # MailSniper
     echo -e "Installing MailSniper\n"
     git clone https://github.com/dafthack/MailSniper.git $powershell_scripts/MailSniper 
-
-    # Nishang
-    echo -e "Installing Nishang\n"
-    git clone https://github.com/samratashok/nishang.git $powershell_scripts/ninshang 
-
-    # PrivescCheck
-    echo -e "Installing PrivescCheck\n"
-    git clone https://github.com/itm4n/PrivescCheck.git $powershell_scripts/PrivescCheck 
 
     python3 -m pip install censys
 
@@ -357,13 +237,139 @@ install_tools() {
 
     # Postman
     mkdir $tools_path/Postman
-    apt install snapd
+    apt install snapd -y
     systemctl start snapd
     snap install core
     snap install postman
 
     echo -e "Installing Amass\n"
     go install -v github.com/OWASP/Amass/v3/...@master  
+
+}
+
+install_tools() {
+    echo -e "\n\n\n Installing Kali tools\n\n\n"
+    # External tools
+    fast
+    #BloodHound
+    check_bh
+
+    # mitm6
+    echo -e "Installing mitm6\n"
+    git clone https://github.com/dirkjanm/mitm6.git $tools_path/mitm6 
+    #pip3 install -r $tools_path/mitm6/requirements.txt 
+    cd $tools_path/mitm6
+    python3 setup.py install 
+
+    # Bloodhound.py (Current Version)
+    echo -e "Installing Bloodhound.py\n"
+    git clone https://github.com/fox-it/BloodHound.py.git $tools_path/BloodHound_NEW.py 
+
+
+    echo -e "Installing PRET\n"
+    pip install colorama pysnmp 
+    pip install win_unicode_console 
+    git clone https://github.com/RUB-NDS/PRET $tools_path/PRET 
+
+    echo -e "Installing WebClientServiceScanner\n"
+    git clone https://github.com/Hackndo/WebclientServiceScanner.git $tools_path/WebclientServiceScanner 
+    cd WebclientServiceScanner
+    python3 setup.py install 
+
+    # pypykatz
+    echo -e "Installing pypykatz\n"
+    git clone https://github.com/skelsec/pypykatz.git $tools_path/pypykatz 
+
+    # evilwin-rm
+    # gem install evil-winrm
+
+    # DonPAPI
+    echo -e "Installing DonPAPI\n"
+    git clone https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI 
+    python3 -m pip install -r $tools_path/DonPAPI/requirements.txt 
+
+    # ntlm_theft
+    git clone https://github.com/Greenwolf/ntlm_theft.git $tools_path/ntlm_theft
+
+    echo -e "Installing ldapdomaindump\n"
+    git clone https://github.com/dirkjanm/ldapdomaindump.git $tools_path/ldapdomaindump 
+    cd $tools_path/ldapdomaindump 
+    python3 setup.py install 
+
+    echo -e "Installing DPAT\n"
+    git clone https://github.com/clr2of8/DPAT.git $tools_path/DPAT 
+
+
+
+    echo -e "Installing Certipy\n"
+    git clone https://github.com/ly4k/Certipy.git $tools_path/Certipy
+    cd $tools_path/Certipy
+    python3 setup.py install
+
+    git clone https://github.com/unode/firefox_decrypt $tools_path/firefox_decrypt
+
+    echo -e "Installing noPac\n"
+    git clone https://github.com/Ridter/noPac.git $tools_path/noPac 
+    cd $tools_path/noPac
+    python3 -m pip install -r requirements.txt 
+
+    # echo -e "Install Pcredz"
+    git clone https://github.com/lgandx/PCredz.git $tools_path/Pcredz
+    cd $tools_path/Pcredz
+    docker build -t pcredz .
+
+    # flamingo
+    go install -v github.com/atredispartners/flamingo@latest
+
+    # CME for docker backup
+    # git clone https://github.com/Porchetta-Industries/CrackMapExec.git $tools_path/CrackMapExec
+    # cd $tools_path/CrackMapExec
+    # docker build -t CrackMapExec .
+
+    # arsenal
+    python3 -m pip install arsenal-cli
+
+    # pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
+    git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
+    cd $tools_path/MANSPIDER
+    python3 -m pip install -r requirements.txt
+    python3 -m pip install textract
+    apt install -y tesseract-ocr antiword
+
+
+    # CrackHound
+    git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
+    cd $tools_path/CrackHound
+    python3 -m pip install -r requirements.txt
+
+    # Plumhound
+    git clone https://github.com/PlumHound/PlumHound.git $tools_path/Plumhound
+    cd $tools_path/Plumhound
+    python3 -m pip install -r requirements.txt
+
+    # Max
+    git clone https://github.com/knavesec/Max.git $tools_path/Max
+    cd $tools_path/Max
+    python3 -m pip install -r requirements.txt
+
+    # Passhound
+    git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
+    cd $tools_path/Max
+    python3 -m pip install -r requirements.txt
+
+    # Powershell Tools
+    #PowerSploit (PowerView, PowerUp, etc)
+    echo -e "Installing PowerSploit\n"
+    git clone https://github.com/PowerShellMafia/PowerSploit.git $powershell_scripts/PowerSploit 
+
+    # Nishang
+    echo -e "Installing Nishang\n"
+    git clone https://github.com/samratashok/nishang.git $powershell_scripts/ninshang 
+
+    # PrivescCheck
+    echo -e "Installing PrivescCheck\n"
+    git clone https://github.com/itm4n/PrivescCheck.git $powershell_scripts/PrivescCheck 
+
 }
 
 check_bh() {
@@ -402,6 +408,8 @@ cme_config() {
     sed -i 's/bh_user = neo4j/bh_user = '$neo4j_usr'/g' $conf
     sed -i 's/bh_pass = neo4j/bh_pass = '$neo4j_pwd'/g' $conf
 }
+
+
 
 
 install_bh() {
@@ -620,8 +628,8 @@ menu () {
     echo -e "  6 - Instal BOFs                Install Cobalt Strike agressor scripts into " $agressor_path      
     echo -e "  7 - Payload Creation           Install tools for payload creation/modification into" $payload_mod                    
     echo -e "  8 - Start BloodHound           Start Neo4j and BloodHound (installs if not already installed)"
-    echo -e "  9 - Add aliases (TODO)         TODO"
-    echo -e "  w - Install wordlists (TODO)   Install additional wordlists"
+    echo -e "  f - FAST                       Essential tools for external assessment"
+    echo -e "  w - Install wordlists          Install additional wordlists"
     echo -e "  x - Exit                       Exit the setup script"                                      
 
     read -n1 -p "\n  Press key for menu item selection or press X to exit: " menu
@@ -644,6 +652,7 @@ options() {
                 6) install_BOFs;;
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
+                f) setup;fast;zsh_setup;install_wl;;
                 w) install_wl;;
                 z) zsh_setup;;
                 x) exit;;  
