@@ -3,10 +3,10 @@ alias hg='history -f | grep -i'
 alias nocolor='sed "s/\x1B\[[0-9;]*[mGK]//g"'
 alias www='python3 -m http.server'
 alias ports='netstat -tulanp'
-alias urlenc='python -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
-alias urldec='python -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1])"'
+alias urlenc='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
+alias urldec='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1])"'
 alias lower="tr '[:upper:]' '[:lower:]'"
-alias lower="tr '[:lower:]' '[:upper:]'"
+alias upper="tr '[:lower:]' '[:upper:]'"
 awkcol() {
     awk "{print \$$1}"
 }

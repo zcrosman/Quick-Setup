@@ -13,6 +13,7 @@ check_user() {
 if [ "$EUID" -ne 0 ]
     then echo -e "\nScript must be run with sudo\n"
     echo -e "sudo -E ./setup.sh"
+    echo -e "sudo -E ./setup.sh 1 GITHUB_TOKEN"
     exit
 fi
 }
@@ -56,7 +57,7 @@ zsh_setup(){
 
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
-    echo "export PATH=$PATH:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
+    echo "export PATH=$PATH:/opt/quick-scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
 
     # exec zsh -l
 }
@@ -615,6 +616,18 @@ payload_creation () {
 
 }
 
+# only for me :)
+my_tools () {
+    if [ -n "$2" ]
+        TOKEN=$2
+        echo "Github toke provided. (zcrosman)"
+        mkdir -p ~/nuclei-templates/custom
+        git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/nuclei-custom.git ~/nuclei-templates/custom/
+        git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/random-scripts.git ~/opt/quick-scripts
+    fi
+
+}
+
 menu () {
     # clear
     echo -e "\n    Select an option from menu:"                      
@@ -630,6 +643,7 @@ menu () {
     echo -e "  8 - Start BloodHound           Start Neo4j and BloodHound (installs if not already installed)"
     echo -e "  f - FAST                       Essential tools for external assessment"
     echo -e "  w - Install wordlists          Install additional wordlists"
+    echo -e "  p - Private tools              Install my private repos (requires Github token!):)"
     echo -e "  x - Exit                       Exit the setup script"                                      
 
     read -n1 -p "\n  Press key for menu item selection or press X to exit: " menu
@@ -644,8 +658,8 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;;
-                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;win_source;install_wl;check_bh;;
+                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;my_tools;;
+                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;win_source;install_wl;check_bh;my_tools;;
                 3) win_binaries;;
                 4) win_source;;
                 5) setup;check_go;install_tools;;
@@ -655,6 +669,7 @@ options() {
                 f) setup;fast;zsh_setup;install_wl;;
                 w) install_wl;;
                 z) zsh_setup;;
+                p) my_tools;;
                 x) exit;;  
             esac
         else menu
