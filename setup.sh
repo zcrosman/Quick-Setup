@@ -254,6 +254,7 @@ install_tools() {
     fast
     #BloodHound
     check_bh
+    pip3 install bofhound
 
     # mitm6
     echo -e "Installing mitm6\n"
@@ -619,12 +620,13 @@ payload_creation () {
 # only for me :)
 my_tools () {
     if [ -n "$2" ]
-        TOKEN=$2
-        echo "Github toke provided. (zcrosman)"
-        mkdir -p ~/nuclei-templates/custom
-        git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/nuclei-custom.git ~/nuclei-templates/custom/
-        git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/random-scripts.git ~/opt/quick-scripts
-    fi
+        then
+            TOKEN=$2
+            echo "Github toke provided. (zcrosman)"
+            mkdir -p ~/nuclei-templates/custom
+            git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/nuclei-custom.git ~/nuclei-templates/custom/
+            git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/random-scripts.git ~/opt/quick-scripts
+            
 
 }
 
@@ -667,6 +669,7 @@ options() {
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
                 f) setup;fast;zsh_setup;install_wl;;
+                g) check_go;;
                 w) install_wl;;
                 z) zsh_setup;;
                 p) my_tools;;

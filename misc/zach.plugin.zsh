@@ -7,6 +7,7 @@ alias urlenc='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv
 alias urldec='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1])"'
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
+alias sortc="sort | uniq -c | sort -n"
 awkcol() {
     awk "{print \$$1}"
 }
