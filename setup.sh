@@ -9,20 +9,21 @@ debug=''
 debug='1>/dev/null'
 
 
-check_user() {
-if [ "$EUID" -ne 0 ]
-    then echo -e "\nScript must be run with sudo\n"
-    echo -e "sudo -E ./setup.sh"
-    echo -e "sudo -E ./setup.sh 1 GITHUB_TOKEN"
-    exit
-fi
-}
+# check_user() {
+# if [ "$EUID" -ne 0 ]
+#     then echo -e "\nScript must be run with sudo\n"
+#     echo -e "sudo -E ./setup.sh"
+#     echo -e "sudo -E ./setup.sh 1 GITHUB_TOKEN"
+#     exit
+# fi
+# }
 
 setup() {
     # Initial updates and installs
-    apt update 
-    apt install -y git-all 
-    apt install -y python3-pip 
+    sudo apt update 
+    sudo apt install -y git-all 
+    sudo apt install -y python3-pip 
+    sudo apt install pipx git
     #zsh_setup
     # For docker
     # apt-get install wget
@@ -121,14 +122,14 @@ install_BOFs() {
     wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
     dpkg -i packages-microsoft-prod.deb 
     rm packages-microsoft-prod.deb 
-    apt-get update 
-    apt-get install -y apt-transport-https 
-    apt-get update 
-    apt-get install -y dotnet-sdk-5.0 
+    #apt-get update 
+    sudo apt-get install -y apt-transport-https 
+    #apt-get update 
+    sudo apt-get install -y dotnet-sdk-5.0 
     git clone https://github.com/williamknows/BOF.NET.git $agressor_path/BOFNET 
     mkdir $agressor_path/BOFNET/build 
     cd $agressor_path/BOFNET/build 
-    apt install -y cmake 
+    sudo apt install -y cmake 
     cmake -DCMAKE_INSTALL_PREFIX=$PWD/install -DCMAKE_BUILD_TYPE=MinSizeRel -DCMAKE_TOOLCHAIN_FILE=../toolchain/Linux-mingw64.cmake .. 
     cmake --build . 
     cmake --install . 
@@ -140,8 +141,8 @@ fast () {
     #Submime
     wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null 
     echo "deb https://download.sublimetext.com/ apt/stable/" | tee /etc/apt/sources.list.d/sublime-text.list 
-    apt-get update 
-    apt-get -y install sublime-text 
+    sudo apt-get update 
+    sudo apt-get -y install sublime-text 
 
     # Kerbrute
     echo -e "Installing Kerbrute\n"
@@ -162,7 +163,7 @@ fast () {
     git clone https://github.com/nccgroup/scrying.git $tools_path/scrying 
     
     echo -e "Installing feroxbuster\n"
-    apt install -y feroxbuster 
+    sudo apt install -y feroxbuster 
 
     echo -e "Installing PetitPotam\n"
     git clone https://github.com/topotam/PetitPotam.git $tools_path/PetitPotam 
@@ -192,9 +193,6 @@ fast () {
     python3 -m pipx ensurepath
     python3 -m pipx install spraycharles
 
-    git clone https://github.com/Pennyw0rth/NetExec.git $tools_path/NetExec
-    cd $tools_path/NetExec
-    pipx install .
 
     # nuclei
     go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
@@ -238,7 +236,7 @@ fast () {
 
     # Postman
     mkdir $tools_path/Postman
-    apt install snapd -y
+    sudo apt install snapd -y
     systemctl start snapd
     snap install core
     snap install postman
@@ -250,7 +248,7 @@ fast () {
 
 install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
-    # External tools
+
     fast
     #BloodHound
     check_bh
@@ -336,7 +334,7 @@ install_tools() {
     cd $tools_path/MANSPIDER
     python3 -m pip install -r requirements.txt
     python3 -m pip install textract
-    apt install -y tesseract-ocr antiword
+    sudo apt install -y tesseract-ocr antiword
 
 
     # CrackHound
@@ -356,7 +354,7 @@ install_tools() {
 
     # Passhound
     git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
-    cd $tools_path/Max
+    cd $tools_path/PassHound
     python3 -m pip install -r requirements.txt
 
     # Powershell Tools
@@ -425,13 +423,13 @@ install_bh() {
 
     # initialize cme to create cme.conf file
     # edit cme.conf to integrate with cme
-    if [ -d '/home/'$SUDO_USER'/.cme/cme.conf' ]
+    if [ -d '/home/'$SUDO_USER'/.nxc/nxc.conf' ]
     then
-        echo -e "cme.conf already exists...."
+        echo -e "nxc.conf already exists...."
         cme_config
     else
-        echo -e "Initializing cme"
-        crackmapexec &>/dev/null
+        echo -e "Initializing nxc"
+        pipx install git+https://github.com/Pennyw0rth/NetExec
         cme_config
     fi
 
@@ -457,7 +455,7 @@ start_bh() {
     
     echo -e "Starting neo4j!!!"
     cd /usr/bin
-    ./neo4j console 
+    sudo ./neo4j console 
     echo -e "Starting neo4j interface (firefox)!!!"
     runuser $(logname) -c "nohup firefox http://localhost:7474/browser/" &
 }
@@ -574,14 +572,14 @@ payload_creation () {
 
     # darkarmour
     git clone https://github.com/bats3c/darkarmour $payload_mod/darkarmour 
-    apt -y install mingw-w64-tools mingw-w64-common g++-mingw-w64 gcc-mingw-w64 upx-ucl osslsigncode 
+    sudo apt -y install mingw-w64-tools mingw-w64-common g++-mingw-w64 gcc-mingw-w64 upx-ucl osslsigncode 
     
     # ScareCrow
     git clone https://github.com/optiv/ScareCrow.git $payload_mod/ScareCrow 
     go get github.com/fatih/color 
     go get github.com/yeka/zip 
     go get github.com/josephspurrier/goversioninfo 
-    apt-get install -y openssl osslsigncode mingw-w64 
+    sudo apt-get install -y openssl osslsigncode mingw-w64 
     go build $tools_path/ScareCrow/ScareCrow.go 
     
     # Donut
@@ -625,9 +623,8 @@ my_tools () {
             echo "Github toke provided. (zcrosman)"
             mkdir -p ~/nuclei-templates/custom
             git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/nuclei-custom.git ~/nuclei-templates/custom/
-            git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/random-scripts.git ~/opt/quick-scripts
-            
-
+            git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/random-scripts.git ~/opt/quick-scripts     
+    fi
 }
 
 menu () {
