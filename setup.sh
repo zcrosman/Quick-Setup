@@ -59,6 +59,10 @@ zsh_setup(){
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
     echo "export PATH=$PATH:/opt/quick-scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
+    echo "export GOROOT=/usr/lib/go" >> $HOME/.zshrc
+    echo "export GOPATH=$HOME/go" >> $HOME/.zshrc
+    echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> $HOME/.zshrc
+
 
     # exec zsh -l
 }
@@ -74,7 +78,7 @@ check_go(){
 
 install_go(){
     echo "\n Installling Go\n"
-    # apt install -y golang 
+    sudo apt install -y golang 
     export GOROOT=/usr/lib/go
     export GOPATH=$HOME/go
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
