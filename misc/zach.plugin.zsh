@@ -8,6 +8,7 @@ alias urldec='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.ar
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias sortc="sort | uniq -c | sort -n"
+alias folder='xdg-open'
 awkcol() {
     awk "{print \$$1}"
 }

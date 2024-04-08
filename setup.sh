@@ -21,9 +21,8 @@ debug='1>/dev/null'
 setup() {
     # Initial updates and installs
     sudo apt update 
-    sudo apt install -y git-all 
-    sudo apt install -y python3-pip 
-    sudo apt install pipx git
+    sudo apt install -y git-all python3-pip pipx git
+    sudo chown -R $USER:$USER /opt
     #zsh_setup
     # For docker
     # apt-get install wget
@@ -110,7 +109,7 @@ install_BOFs() {
     git clone https://github.com/cube0x0/LdapSignCheck.git $agressor_path/LdapSignCheck
     git clone https://github.com/boku7/injectEtwBypass.git $agressor_path/injectEtwBypass
     git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks    
-    git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
+    #git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
     git clone https://github.com/outflanknl/C2-Tool-Collection.git $agressor_path/outflank-tool-collection
     cd $agressor_path/outflank-tool-collection/BOF
     make all
@@ -124,7 +123,7 @@ install_BOFs() {
     
     #BOFNET
     wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-    dpkg -i packages-microsoft-prod.deb 
+    sudo dpkg -i packages-microsoft-prod.deb 
     rm packages-microsoft-prod.deb 
     #apt-get update 
     sudo apt-get install -y apt-transport-https 
@@ -150,7 +149,7 @@ fast () {
 
     # Kerbrute
     echo -e "Installing Kerbrute\n"
-    go isntall github.com/ropnop/kerbrute@latest
+    go install github.com/ropnop/kerbrute@latest
 
     # Aquatone
     echo -e "Installing Aquatone\n"
@@ -207,9 +206,10 @@ fast () {
     python3 seteup.py install
 
     # Wordlist Generation
-    git clone --recurse-submodules https://github.com/r3nt0n/bopscrk $tools_path/bobscrk
-    $tools_path/bobscrk
-    python3 -m pip install -r requirements.txt
+    # git clone --recurse-submodules https://github.com/r3nt0n/bopscrk $tools_path/bobscrk
+    # $tools_path/bobscrk
+    # python3 -m pip install -r requirements.txt
+    python3 -m pip install bopscrk
 
     # MailSniper
     echo -e "Installing MailSniper\n"
@@ -395,7 +395,7 @@ check_bh() {
 
 cme_config() {
 
-    conf='~/.nxc/nxc.conf'
+    conf="$HOME/.nxc/nxc.conf"
     echo "Updating NetExec config in "$conf
 
     # For "professional" screenshots
@@ -427,7 +427,7 @@ install_bh() {
 
     # initialize cme to create cme.conf file
     # edit cme.conf to integrate with cme
-    if [ -d '/home/'$SUDO_USER'/.nxc/nxc.conf' ]
+    if [ -d '~/.nxc/nxc.conf' ]
     then
         echo -e "nxc.conf already exists...."
         cme_config
@@ -523,7 +523,8 @@ win_binaries(){
 }
 
 install_wl() {
-    mkdir /usr/share/wordlists
+    sudo mkdir /usr/share/wordlists
+    sudo chmod +w -R /usr/share/wordlists
     ln -s /usr/share/wordlists ~/wordlists
     cd /usr/share/wordlists
     gzip -dq /usr/share/wordlists/rockyou.txt.gz 
