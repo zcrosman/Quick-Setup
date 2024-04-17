@@ -9,6 +9,7 @@ alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias sortc="sort | uniq -c | sort -n"
 alias folder='xdg-open'
+alias calc='libreoffice --calc'
 awkcol() {
     awk "{print \$$1}"
 }
