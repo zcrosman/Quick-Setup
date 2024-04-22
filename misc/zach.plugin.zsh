@@ -10,6 +10,7 @@ alias upper="tr '[:lower:]' '[:upper:]'"
 alias sortc="sort | uniq -c | sort -n"
 alias folder='xdg-open'
 alias calc='libreoffice --calc'
+alias cutc='cut -d "," -f'
 awkcol() {
     awk "{print \$$1}"
 }

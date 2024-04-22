@@ -27,6 +27,20 @@ setup() {
     # For docker
     # apt-get install wget
     # apt install zip -y
+    echo "[*] Setting Screenshot Shortcut"
+
+    # From Bryan - set flameshort shortcut
+    if [ "$XDG_CURRENT_DESKTOP" == "GNOME" ]; then
+        #gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings
+        ## Set Shortcut
+        gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "'flameshot'"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "'<primary><shift>s'"
+        gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "'flameshot gui'"
+    else
+    ## XFCE
+        xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Primary><Shift>S" --create --type string --set "flameshot gui"
+    fi
 }
 
 zsh_setup(){
@@ -622,14 +636,12 @@ payload_creation () {
 
 # only for me :)
 my_tools () {
-    if [ -n "$2" ]
-        then
-            TOKEN=$2
-            echo "Github toke provided. (zcrosman)"
-            mkdir -p ~/nuclei-templates/custom
-            git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/nuclei-custom.git ~/nuclei-templates/custom/
-            git clone https://$TOKEN:x-oauth-basic@github.com/zcrosman/random-scripts.git ~/opt/quick-scripts     
-    fi
+    mkdir -p ~/nuclei-custom
+    git clone https://zcrosman@github.com/zcrosman/nuclei-custom.git ~/nuclei-custom
+    git clone https://zcrosman@github.com/zcrosman/random-scripts.git /opt/quick-scripts   
+    git clone https://zcrosman@github.com/zcrosman/LockPick.git /opt/LockPick 
+  
+
 }
 
 menu () {
