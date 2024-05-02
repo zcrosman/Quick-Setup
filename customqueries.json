@@ -872,6 +872,16 @@
 			]
 		},
         {
+			"name": "Owned accounts where passwords don't expire",
+			"category": "Password Review",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (n:User {owned:true}) WHERE n.pwdneverexpires RETURN n"
+                }
+			]
+		},
+        {
 			"name": "Accounts where passwords havne't been changed in over 90 days",
 			"category": "Password Review",
 			"queryList": [
@@ -891,7 +901,17 @@
                 }
 			]
 		},
-	    	{
+        {
+			"name": "Owned accounts where passwords havne't been changed in over a year but do expire",
+			"category": "Password Review",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (n:User {pwdneverexpires:false}) WHERE n.pwdLastSet < (timestamp() - 365*24*60*60*1000) RETURN n"
+                }
+			]
+		},
+	    {
             "name": "Find all accounts that share passwords",
             "category": "Password Sharing",
             "queryList": [
@@ -997,6 +1017,157 @@
 					"query": "MATCH (u:User)-[:AdminTo]->(h:Host) WHERE EXISTS(u.servicePrincipalName) RETURN u"
                 }
 			]
+		},
+        {
+			"name": "Users with possible passwords in description",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (u:User) WHERE u.description =~ \"(?i).*welcome.*|.*winter.*|.*spring.*|.*summer.*|.*fall.*|.*password.*|.*pwd.*|.*pass.*|.*[pP][aA@][sS$][sS$][wW][oO0][rR][dD].*\" RETURN u"
+                }
+			]
+		},
+        {
+			"name": "Owned user path to possible admin related group (admin in group name or desc)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p = (m:User {owned:true})-[r:MemberOf*1..]->(n:Group)  WHERE toLower(n.description) CONTAINS \"admin\" OR toLower(n.samaccountname) CONTAINS \"admin\"  RETURN p"
+                }
+			]
+		},
+        {
+			"name": "Users with home directory set",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(u:User {owned:true}) where u.homedirectory is not null return u"
+                }
+			]
+		},
+        {
+			"name": "Owned user that has local admin to any computer",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(m:User {owned:True})-[r1:MemberOf|AdminTo*1..]->(n:Computer) RETURN p"
+                }
+			]
+		},
+        {
+			"name": "Computer account is admin to other computer (forced auth :))",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(m:Computer)-[r1:MemberOf|AdminTo*1..]->(n:Computer) RETURN p"
+                }
+			]
+		},
+        {
+			"name": "Find SQLAdmins (limit 50)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(u:User)-[r:MemberOf|SQLAdmin]->(c:Computer) return p LIMIT 50"
+                }
+			]
+		},
+        {
+			"name": "SQLAdmins that have DA session on host",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(u:User)-[r:MemberOf|SQLAdmin]->(c:Computer)-[n:HasSession]->(u2:User)-[r2:MemberOf*1..]->(g:Group) WHERE  g.objectid ENDS WITH '-512' return p"
+                }
+			]
+		},
+        {
+			"name": "Owned SQLAdmins that have DA session on host",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(u:User {owned: True})-[r:MemberOf|SQLAdmin]->(c:Computer)-[n:HasSession]->(u2:User)-[r2:MemberOf*1..]->(g:Group) WHERE  g.objectid ENDS WITH '-512' return p"
+                }
+			]
+		},
+        {
+			"name": "Better Search - User Descriptions (default: password)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "match (u:User) where u.description contains \"password\" return u"
+                }
+			]
+		},
+        {
+			"name": "Better Search - User First/Last Name (default: zach)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "with \"zach\" as name match (u:User) WHERE toLower(u.displayname) CONTAINS name OR toLower(u.distinguisedname) CONTAINS name RETURN u"
+                }
+			]
+		},
+        {
+			"name": "Better Search - User Email (default: @gmail.com)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "match (u:User) where u.email contains \"@gmail.com\" return u"
+                }
+			]
+		},
+        {
+			"name": "Better Search - User Email (default: @gmail.com)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "match (u:User) where u.displayname contains \"@gmail.com\" return u"
+                }
+			]
+		},
+        {
+			"name": "Service accounts related to SQL",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "match (u:User) where u.hasspn and toLower(u.spntargets) contains \"sql\" return u"
+                }
+			]
+		},
+        {
+			"name": "Service accounts related to web service",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "match (u:User) where u.hasspn and toLower(u.spntargets) contains \"http\" return u"
+                }
+			]
+		},
+        {
+			"name": "Not working - Service accounts not related to web or sql",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (u:User) WHERE u.hasspn AND NOT (toLower(u.spntargets) CONTAINS \"http\" OR toLower(u.spntargets) CONTAINS \"sql\" RETURN u"
+                }
+			]
 		}
+
 	]
 }
