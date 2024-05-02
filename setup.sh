@@ -548,6 +548,7 @@ install_wl() {
     git clone https://github.com/Karanxa/Bug-Bounty-Wordlists.git /usr/share/wordlists/Karanxa-Bug-Bounty
     git clone https://github.com/orwagodfather/WordList.git /usr/share/wordlists/orwagodfather-fuzz-wl
     git clone https://github.com/insidetrust/statistically-likely-usernames.git /usr/share/wordlists/statistically-likely-usernames
+    git clone https://github.com/d1r7b46/Default-Email-Repository-Project /usr/share/wordlists/Default-Email-Repo-Project
 }
 
 
