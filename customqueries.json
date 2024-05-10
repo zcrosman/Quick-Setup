@@ -558,219 +558,6 @@
 			]
 		},
         {
-            "name": "Find all Certificate Templates",
-            "category": "Certipy - Certificates",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Find enabled Certificate Templates",
-            "category": "Certipy - Certificates",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.Enabled = true RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Find Certificate Authorities",
-            "category": "Certipy - Certificates",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Show Enrollment Rights for Certificate Template",
-            "category": "Certipy - Certificates",
-            "queryList": [
-              {
-                "final": false,
-                "title": "Select a Certificate Template...",
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' RETURN n.name"
-              },
-              {
-                "final": true,
-                "query": "MATCH p=(g)-[:Enroll|AutoEnroll]->(n:GPO {name:$result}) WHERE n.type = 'Certificate Template' return p",
-                "allowCollapse": false
-              }
-            ]
-          },
-          {
-            "name": "Show Rights for Certificate Authority",
-            "category": "Certipy - Certificates",
-            "queryList": [
-              {
-                "final": false,
-                "title": "Select a Certificate Authority...",
-                "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' RETURN n.name"
-              },
-              {
-                "final": true,
-                "query": "MATCH p=(g)-[:ManageCa|ManageCertificates|Auditor|Operator|Read|Enroll]->(n:GPO {name:$result}) return p",
-                "allowCollapse": false
-              }
-            ]
-          },
-          {
-            "name": "Find Misconfigured Certificate Templates (ESC1)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true  RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Misconfigured Certificate Templates from Owned Principals (ESC1)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true return p"
-              }
-            ]
-          },
-          {
-            "name": "Find Misconfigured Certificate Templates (ESC2)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage`)  RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Misconfigured Certificate Templates from Owned Principals (ESC2)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage`) return p"
-              }
-            ]
-          },
-          {
-            "name": "Find Enrollment Agent Templates (ESC3)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage` or 'Certificate Request Agent' IN n.`Extended Key Usage`)  RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Enrollment Agent Templates from Owned Principals (ESC3)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage` or 'Certificate Request Agent' IN n.`Extended Key Usage`) return p"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Vulnerable Certificate Template Access Control (ESC4)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=shortestPath((g)-[:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true RETURN p"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Vulnerable Certificate Template Access Control from Owned Principals (ESC4)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=allShortestPaths((g {owned:true})-[r*1..]->(n:GPO)) WHERE g<>n and n.type = 'Certificate Template' and n.Enabled = true and NONE(x in relationships(p) WHERE type(x) = 'Enroll' or type(x) = 'AutoEnroll') return p"
-              }
-            ]
-          },
-          {
-            "name": "Find Certificate Authorities with User Specified SAN (ESC6)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' and n.`User Specified SAN` = 'Enabled' RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Vulnerable Certificate Authority Access Control (ESC7)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=shortestPath((g)-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|ManageCa|ManageCertificates*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Enrollment Service' RETURN p"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Vulnerable Certificate Authority Access Control from Owned Principals (ESC7)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Enrollment Service' and NONE(x in relationships(p) WHERE type(x) = 'Enroll' or type(x) = 'AutoEnroll') RETURN p"
-              }
-            ]
-          },
-          {
-            "name": "Find Certificate Authorities with HTTP Web Enrollment (ESC8)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' and n.`Web Enrollment` = 'Enabled' RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Find Unsecured Certificate Templates (ESC9)",
-            "category": "Certipy - Domain Escalation",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true  RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Find Unsecured Certificate Templates (ESC9)",
-            "category": "Certipy - PKI",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and 'NoSecurityExtension' in n.`Enrollment Flag` and n.`Enabled` = true  RETURN n"
-              }
-            ]
-          },
-          {
-            "name": "Shortest Paths to Unsecured Certificate Templates from Owned Principals (ESC9)",
-            "category": "Certipy - PKI",
-            "queryList": [
-              {
-                "final": true,
-                "query": "MATCH p=allShortestPaths((g {owned:true})-[r*1..]->(n:GPO)) WHERE n.type = 'Certificate Template' and g<>n and 'NoSecurityExtension' in n.`Enrollment Flag` and n.`Enabled` = true and NONE(rel in r WHERE type(rel) in ['EnabledBy','Read','ManageCa','ManageCertificates']) return p"
-              }
-            ]
-          },
-        
-        {
 			"name": "Return all owned users that have admin rights to hosts",
 			"category": "Outbound Object Control",
 			"queryList": [
@@ -808,6 +595,16 @@
 				{
 					"final": true,
 					"query": "MATCH p=(g:Group)-[:ReadLAPSPassword]->(c:Computer) RETURN p"
+                }
+			]
+		},
+        {
+			"name": "Owned users that can read LAPS passwords",
+			"category": "LAPS",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(g:User)-[:MemberOf|ReadLAPSPassword]->(c:Computer) RETURN p"
                 }
 			]
 		},
@@ -987,6 +784,248 @@
 	}
 		]
 	},
+    {
+        "name": "User Descriptions (default: password)",
+        "category": "Better Search",
+        "queryList": [
+            {
+                "final": true,
+                "query": "match (u:User) where u.description contains \"password\" return u"
+            }
+        ]
+    },
+    {
+        "name": "User First/Last Name (default: zach)",
+        "category": "Better Search",
+        "queryList": [
+            {
+                "final": true,
+                "query": "with \"zach\" as name match (u:User) WHERE toLower(u.displayname) CONTAINS name OR toLower(u.distinguisedname) CONTAINS name RETURN u"
+            }
+        ]
+    },
+    {
+        "name": "User Email (default: @gmail.com)",
+        "category": "Better Search",
+        "queryList": [
+            {
+                "final": true,
+                "query": "match (u:User) where u.email contains \"@gmail.com\" return u"
+            }
+        ]
+    },
+    {
+        "name": "Find all Certificate Templates",
+        "category": "Certipy - Certificates",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Find enabled Certificate Templates",
+        "category": "Certipy - Certificates",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.Enabled = true RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Find Certificate Authorities",
+        "category": "Certipy - Certificates",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Show Enrollment Rights for Certificate Template",
+        "category": "Certipy - Certificates",
+        "queryList": [
+            {
+            "final": false,
+            "title": "Select a Certificate Template...",
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' RETURN n.name"
+            },
+            {
+            "final": true,
+            "query": "MATCH p=(g)-[:Enroll|AutoEnroll]->(n:GPO {name:$result}) WHERE n.type = 'Certificate Template' return p",
+            "allowCollapse": false
+            }
+        ]
+        },
+        {
+        "name": "Show Rights for Certificate Authority",
+        "category": "Certipy - Certificates",
+        "queryList": [
+            {
+            "final": false,
+            "title": "Select a Certificate Authority...",
+            "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' RETURN n.name"
+            },
+            {
+            "final": true,
+            "query": "MATCH p=(g)-[:ManageCa|ManageCertificates|Auditor|Operator|Read|Enroll]->(n:GPO {name:$result}) return p",
+            "allowCollapse": false
+            }
+        ]
+        },
+        {
+        "name": "Find Misconfigured Certificate Templates (ESC1)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true  RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Misconfigured Certificate Templates from Owned Principals (ESC1)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true return p"
+            }
+        ]
+        },
+        {
+        "name": "Find Misconfigured Certificate Templates (ESC2)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage`)  RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Misconfigured Certificate Templates from Owned Principals (ESC2)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage`) return p"
+            }
+        ]
+        },
+        {
+        "name": "Find Enrollment Agent Templates (ESC3)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage` or 'Certificate Request Agent' IN n.`Extended Key Usage`)  RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Enrollment Agent Templates from Owned Principals (ESC3)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage` or 'Certificate Request Agent' IN n.`Extended Key Usage`) return p"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Vulnerable Certificate Template Access Control (ESC4)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=shortestPath((g)-[:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true RETURN p"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Vulnerable Certificate Template Access Control from Owned Principals (ESC4)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=allShortestPaths((g {owned:true})-[r*1..]->(n:GPO)) WHERE g<>n and n.type = 'Certificate Template' and n.Enabled = true and NONE(x in relationships(p) WHERE type(x) = 'Enroll' or type(x) = 'AutoEnroll') return p"
+            }
+        ]
+        },
+        {
+        "name": "Find Certificate Authorities with User Specified SAN (ESC6)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' and n.`User Specified SAN` = 'Enabled' RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Vulnerable Certificate Authority Access Control (ESC7)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=shortestPath((g)-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|ManageCa|ManageCertificates*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Enrollment Service' RETURN p"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Vulnerable Certificate Authority Access Control from Owned Principals (ESC7)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Enrollment Service' and NONE(x in relationships(p) WHERE type(x) = 'Enroll' or type(x) = 'AutoEnroll') RETURN p"
+            }
+        ]
+        },
+        {
+        "name": "Find Certificate Authorities with HTTP Web Enrollment (ESC8)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' and n.`Web Enrollment` = 'Enabled' RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Find Unsecured Certificate Templates (ESC9)",
+        "category": "Certipy - Domain Escalation",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true  RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Find Unsecured Certificate Templates (ESC9)",
+        "category": "Certipy - PKI",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and 'NoSecurityExtension' in n.`Enrollment Flag` and n.`Enabled` = true  RETURN n"
+            }
+        ]
+        },
+        {
+        "name": "Shortest Paths to Unsecured Certificate Templates from Owned Principals (ESC9)",
+        "category": "Certipy - PKI",
+        "queryList": [
+            {
+            "final": true,
+            "query": "MATCH p=allShortestPaths((g {owned:true})-[r*1..]->(n:GPO)) WHERE n.type = 'Certificate Template' and g<>n and 'NoSecurityExtension' in n.`Enrollment Flag` and n.`Enabled` = true and NONE(rel in r WHERE type(rel) in ['EnabledBy','Read','ManageCa','ManageCertificates']) return p"
+            }
+        ]
+        },
         
         {
 			"name": "Accounts that have never logged in",
@@ -1129,12 +1168,12 @@
 			]
 		},
         {
-			"name": "Better Search - User Email (default: @gmail.com)",
+			"name": "IT related",
 			"category": "In testing (could be wrong)",
 			"queryList": [
 				{
 					"final": true,
-					"query": "match (u:User) where u.displayname contains \"@gmail.com\" return u"
+					"query": "match (u:User) where or toLower(u.title) contains \"network\" or toLower(u.title) contains \"admin\" or toLower(u.title) contains \"system\" or toLower(u.title) contains \"security\" return u"
                 }
 			]
 		},
@@ -1144,7 +1183,7 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "match (u:User) where u.hasspn and toLower(u.spntargets) contains \"sql\" return u"
+					"query": "MATCH (n:User) WHERE n.hasspn = true   AND ANY(spn IN n.serviceprincipalnames WHERE toLower(spn) CONTAINS \"mssql\" OR toLower(spn) CONTAINS \"1433\") RETURN n"
                 }
 			]
 		},
@@ -1154,20 +1193,32 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "match (u:User) where u.hasspn and toLower(u.spntargets) contains \"http\" return u"
+					"query": "MATCH (n:User) WHERE n.hasspn = true   AND ANY(spn IN n.serviceprincipalnames WHERE toLower(spn) CONTAINS \"http\" OR spn CONTAINS \"80\" OR spn CONTAINS \"443\") RETURN n"
                 }
 			]
 		},
         {
-			"name": "Not working - Service accounts not related to web or sql",
+			"name": "Service accounts not related to web or sql",
 			"category": "In testing (could be wrong)",
 			"queryList": [
 				{
 					"final": true,
-					"query": "MATCH (u:User) WHERE u.hasspn AND NOT (toLower(u.spntargets) CONTAINS \"http\" OR toLower(u.spntargets) CONTAINS \"sql\" RETURN u"
+					"query": "MATCH (n:User) WHERE n.hasspn = true   AND NOT ANY(spn IN n.serviceprincipalnames WHERE toLower(spn) CONTAINS \"mssql\" OR toLower(spn) CONTAINS \"1433\") RETURN n"
+                }
+			]
+		},
+        {
+			"name": "Accounts or Groups related to high value targets",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (n) WHERE ( n:User OR n:Group ) AND ( toLower(n.name) CONTAINS \"esxi\" OR toLower(n.name) CONTAINS \"vmware\" OR toLower(n.name) CONTAINS \"manage engine\" OR toLower(n.name) CONTAINS \"solarwinds\" OR toLower(n.name) CONTAINS \"proxmox\" OR toLower(n.description) CONTAINS \"esxi\" OR toLower(n.description) CONTAINS \"vmware\" OR toLower(n.description) CONTAINS \"manage engine\" OR toLower(n.description) CONTAINS \"solarwinds\" OR toLower(n.description) CONTAINS \"proxmox\" OR toLower(n.name) CONTAINS \"crowdstrike\" OR toLower(n.description) CONTAINS \"crowdstrike\" OR toLower(n.name) CONTAINS \"secureworks\" OR toLower(n.description) CONTAINS \"secureworks\" OR toLower(n.name) CONTAINS \"huntress\" OR toLower(n.description) CONTAINS \"huntress\" OR toLower(n.name) CONTAINS \"defender\" OR toLower(n.description) CONTAINS \"defender\" OR toLower(n.name) CONTAINS \"cybereason\" OR toLower(n.description) CONTAINS \"cybereason\" OR toLower(n.name) CONTAINS \"sophos\" OR toLower(n.description) CONTAINS \"sophos\" OR toLower(n.name) CONTAINS \"symantec\" OR toLower(n.description) CONTAINS \"symantec\" OR toLower(n.name) CONTAINS \"sentinelone\" OR toLower(n.description) CONTAINS \"sentinelone\" OR toLower(n.name) CONTAINS \"cortex\" OR toLower(n.description) CONTAINS \"cortex\" OR toLower(n.name) CONTAINS \"xdr\" OR toLower(n.description) CONTAINS \"xdr\" OR toLower(n.name) CONTAINS \"prtg\" OR toLower(n.description) CONTAINS \"prtg\" ) RETURN n"
                 }
 			]
 		}
+
+        
 
 	]
 }
