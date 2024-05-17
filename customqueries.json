@@ -780,7 +780,7 @@
 		"queryList": [
 			{
 				"final": true,
-				"query": "MATCH (n:User) WHERE n.pwdLastSet < (timestamp() - 365*24*60*60*1000) RETURN n"
+				"query": " MATCH (u) WHERE (u:User OR u:AZUser) WHERE u.pwdLastSet < (timestamp() - 365*24*60*60*1000) RETURN u"
 	}
 		]
 	},
@@ -790,7 +790,7 @@
         "queryList": [
             {
                 "final": true,
-                "query": "match (u:User) where u.description contains \"password\" return u"
+                "query": "MATCH (u) WHERE (u:User OR u:AZUser) where u.description contains \"password\" return u"
             }
         ]
     },
@@ -800,7 +800,7 @@
         "queryList": [
             {
                 "final": true,
-                "query": "with \"zach\" as name match (u:User) WHERE toLower(u.displayname) CONTAINS name OR toLower(u.distinguisedname) CONTAINS name RETURN u"
+                "query": "WITH \"zach\" AS name MATCH (u) WHERE (u:User OR u:AZUser)  AND (toLower(u.displayname) CONTAINS name OR toLower(u.distinguisedname) CONTAINS name) RETURN u"
             }
         ]
     },
@@ -810,7 +810,7 @@
         "queryList": [
             {
                 "final": true,
-                "query": "with \"gmail\" as email MATCH (n) WHERE n.email contains email  or n.mail contains email RETURN n "
+                "query": "with \"gmail\" as email MATCH (u) WHERE (u:User OR u:AZUser) WHERE u.email contains email  or u.mail contains email RETURN u "
             }
         ]
     },
