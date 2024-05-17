@@ -805,12 +805,12 @@
         ]
     },
     {
-        "name": "User Email (default: @gmail.com)",
+        "name": "User Email (default: gmail)",
         "category": "Better Search",
         "queryList": [
             {
                 "final": true,
-                "query": "match (u:User) where u.email contains \"@gmail.com\" return u"
+                "query": "with \"gmail\" as email MATCH (n) WHERE n.email contains email  or n.mail contains email RETURN n "
             }
         ]
     },
