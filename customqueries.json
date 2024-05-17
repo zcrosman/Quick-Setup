@@ -584,10 +584,20 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "MATCH (c:Computer {haslaps: true}) RETURN c"
+					"query": "MATCH (c:Computer {haslaps: true, enabled:true}) RETURN c"
                 }
 			]
 		},
+	{
+		"name": "Computers without LAPS enabled",
+		"category": "LAPS",
+		"queryList": [
+			{
+				"final": true,
+				"query": "MATCH (c:Computer {haslaps: false, enabled:true}) RETURN c"
+	}
+		]
+	},
         {
 			"name": "Groups that can read LAPS passwords",
 			"category": "LAPS",
