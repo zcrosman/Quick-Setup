@@ -587,16 +587,16 @@
 					"query": "MATCH (c:Computer {haslaps: true, enabled:true}) RETURN c"
                 }
 			]
-		},
+	},
 	{
-		"name": "Computers without LAPS enabled",
-		"category": "LAPS",
-		"queryList": [
-			{
-				"final": true,
-				"query": "MATCH (c:Computer {haslaps: false, enabled:true}) RETURN c"
-	}
-		]
+			"name": "Non High Value Computer without LAPS enabled",
+			"category": "LAPS",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (c:Computer {haslaps: false, enabled:true, highvalue:false}) RETURN c"
+                }
+			]
 	},
         {
 			"name": "Groups that can read LAPS passwords",
@@ -614,7 +614,7 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "MATCH p=(g:User)-[:MemberOf|ReadLAPSPassword]->(c:Computer) RETURN p"
+					"query": "MATCH p=(g:User{enabled:true})-[:MemberOf|ReadLAPSPassword]->(c:Computer) RETURN p"
                 }
 			]
 		},
@@ -728,13 +728,23 @@
                 }
             ]
         },
+	    	    {
+            "name": "Find all accounts (enabled) that share passwords",
+            "category": "Password Sharing",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH p=(u:User{enabled:true})-[r:SharesPassword]->(n{enabled:true}) return p"
+                }
+            ]
+        },
         {
             "name": "Find all owned accounts that share passwords",
             "category": "Password Sharing",
             "queryList": [
                 {
                     "final": true,
-                    "query": "MATCH p=(u:User)-[r:SharesPassword]->(n) where u.owned = true return p"
+                    "query": "MATCH p=(u:User{enabled:true})-[r:SharesPassword]->(n) where u.owned = true return p"
                 }
             ]
         },
