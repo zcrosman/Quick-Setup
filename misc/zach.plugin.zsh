@@ -11,7 +11,7 @@ alias sortc="sort | uniq -c | sort -n"
 alias folder='xdg-open'
 alias calc='libreoffice --calc'
 alias cutc='cut -d "," -f'
-comm12() {
+common() {
     comm -12 <(sort -u "$1") <(sort -u "$2")
 }
 ntlm_hash () {
