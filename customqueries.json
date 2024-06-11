@@ -584,10 +584,20 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "MATCH (c:Computer {haslaps: true}) RETURN c"
+					"query": "MATCH (c:Computer {haslaps: true, enabled:true}) RETURN c"
                 }
 			]
-		},
+	},
+	{
+			"name": "Non High Value Computer without LAPS enabled",
+			"category": "LAPS",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH (c:Computer {haslaps: false, enabled:true, highvalue:false}) RETURN c"
+                }
+			]
+	},
         {
 			"name": "Groups that can read LAPS passwords",
 			"category": "LAPS",
@@ -604,7 +614,7 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "MATCH p=(g:User)-[:MemberOf|ReadLAPSPassword]->(c:Computer) RETURN p"
+					"query": "MATCH p=(g:User{enabled:true})-[:MemberOf|ReadLAPSPassword]->(c:Computer) RETURN p"
                 }
 			]
 		},
@@ -718,13 +728,23 @@
                 }
             ]
         },
+	    	    {
+            "name": "Find all accounts (enabled) that share passwords",
+            "category": "Password Sharing",
+            "queryList": [
+                {
+                    "final": true,
+                    "query": "MATCH p=(u:User{enabled:true})-[r:SharesPassword]->(n{enabled:true}) return p"
+                }
+            ]
+        },
         {
             "name": "Find all owned accounts that share passwords",
             "category": "Password Sharing",
             "queryList": [
                 {
                     "final": true,
-                    "query": "MATCH p=(u:User)-[r:SharesPassword]->(n) where u.owned = true return p"
+                    "query": "MATCH p=(u:User{enabled:true})-[r:SharesPassword]->(n) where u.owned = true return p"
                 }
             ]
         },
@@ -780,7 +800,7 @@
 		"queryList": [
 			{
 				"final": true,
-				"query": "MATCH (n:User) WHERE n.pwdLastSet < (timestamp() - 365*24*60*60*1000) RETURN n"
+				"query": " MATCH (u) WHERE (u:User OR u:AZUser) WHERE u.pwdLastSet < (timestamp() - 365*24*60*60*1000) RETURN u"
 	}
 		]
 	},
@@ -790,7 +810,7 @@
         "queryList": [
             {
                 "final": true,
-                "query": "match (u:User) where u.description contains \"password\" return u"
+                "query": "MATCH (u) WHERE (u:User OR u:AZUser) where u.description contains \"password\" return u"
             }
         ]
     },
@@ -800,17 +820,17 @@
         "queryList": [
             {
                 "final": true,
-                "query": "with \"zach\" as name match (u:User) WHERE toLower(u.displayname) CONTAINS name OR toLower(u.distinguisedname) CONTAINS name RETURN u"
+                "query": "WITH \"zach\" AS name MATCH (u) WHERE (u:User OR u:AZUser)  AND (toLower(u.displayname) CONTAINS name OR toLower(u.distinguisedname) CONTAINS name) RETURN u"
             }
         ]
     },
     {
-        "name": "User Email (default: @gmail.com)",
+        "name": "User Email (default: gmail)",
         "category": "Better Search",
         "queryList": [
             {
                 "final": true,
-                "query": "match (u:User) where u.email contains \"@gmail.com\" return u"
+                "query": "with \"gmail\" as email MATCH (u) WHERE (u:User OR u:AZUser) WHERE u.email contains email  or u.mail contains email RETURN u "
             }
         ]
     },

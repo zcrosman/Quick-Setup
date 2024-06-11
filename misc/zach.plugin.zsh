@@ -11,10 +11,25 @@ alias sortc="sort | uniq -c | sort -n"
 alias folder='xdg-open'
 alias calc='libreoffice --calc'
 alias cutc='cut -d "," -f'
+common() {
+    comm -12 <(sort -u "$1") <(sort -u "$2")
+}
 ntlm_hash () {
-    hash=$(iconv -f ASCII -t UTF-16LE <(printf "$1") | 
-    openssl dgst -md4 | cut -d" " -f2 );         
-    cat /mnt/share/Working/loot/ntds.txt | grep -i ${hash};
+    hash=$(iconv -f ASCII -t UTF-16LE <(printf "$1") | openssl dgst -md4 | cut -d" " -f2 )
+    if [ -z "$2" ]; then
+        file="/mnt/share/Working/loot/ntds.txt"
+        if [ ! -f "$file" ]; then
+            echo "Error: Static file $file does not exist."
+            return 1
+        fi
+    else
+        file="$2"
+        if [ ! -f "$file" ]; then
+            echo "Error: Specified file $file does not exist."
+            return 1
+        fi
+    fi
+    grep -i ${hash} "$file"
 }
 awkcol() {
     awk "{print \$$1}"
