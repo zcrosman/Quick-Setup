@@ -245,6 +245,7 @@ fast () {
     go install github.com/lc/gau@latest
     go install github.com/projectdiscovery/httpx/cmd/httpx@latest
     go install github.com/projectdiscovery/uncover/cmd/uncover@latest
+    go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
 
     git clone https://github.com/sa7mon/S3Scanner.git $tools_path/s3scanner
     cd $tools_path/s3scanner
@@ -266,7 +267,7 @@ fast () {
 
 install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
-
+    cme_config
     fast
     #BloodHound
     check_bh
@@ -448,6 +449,7 @@ install_bh() {
     else
         echo -e "Initializing nxc"
         pipx install git+https://github.com/Pennyw0rth/NetExec
+        nxc
         cme_config
     fi
 

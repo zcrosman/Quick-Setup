@@ -1098,6 +1098,26 @@
 			]
 		},
         {
+			"name": "Owned object that has local admin to any computer",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(m {owned:True})-[r1:MemberOf|GenricAll|GenericWrite*1..]->(n:Computer) RETURN p"
+                }
+			]
+		},
+        {
+			"name": "Owned object that has local admin to any computer",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "MATCH p=(m {owned:True})-[r1:MemberOf|AdminTo*1..]->(n:Computer) RETURN p"
+                }
+			]
+		},
+        {
 			"name": "Computer account is admin to other computer (forced auth :))",
 			"category": "In testing (could be wrong)",
 			"queryList": [
@@ -1158,6 +1178,16 @@
 			]
 		},
         {
+			"name": "Better Search - User - Username/Description/Title (default: president)",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "with \"president\" as search match (u:User) WHERE toLower(u.displayname) CONTAINS search OR toLower(u.distinguisedname) CONTAINS search WHERE toLower(u.title) CONTAINS search WHERE toLower(u.description) CONTAINS search RETURN u"
+                }
+			]
+		},
+        {
 			"name": "Better Search - User Email (default: @gmail.com)",
 			"category": "In testing (could be wrong)",
 			"queryList": [
@@ -1173,7 +1203,7 @@
 			"queryList": [
 				{
 					"final": true,
-					"query": "match (u:User) where or toLower(u.title) contains \"network\" or toLower(u.title) contains \"admin\" or toLower(u.title) contains \"system\" or toLower(u.title) contains \"security\" return u"
+					"query": "match (u:User) where toLower(u.title) contains \"network\" or toLower(u.title) contains \"admin\" or toLower(u.title) contains \"system\" or toLower(u.title) contains \"security\" return u"
                 }
 			]
 		},
