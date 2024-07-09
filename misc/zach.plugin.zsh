@@ -11,6 +11,27 @@ alias sortc="sort | uniq -c | sort -n"
 alias folder='xdg-open'
 alias calc='libreoffice --calc'
 alias cutc='cut -d "," -f'
+align_columns() {
+    awk '
+    {
+        for (i = 1; i <= NF; i++) {
+            if (length($i) > max_len[i]) {
+                max_len[i] = length($i)
+            }
+            data[NR,i] = $i
+        }
+    }
+    END {
+        for (row = 1; row <= NR; row++) {
+            for (col = 1; col <= NF; col++) {
+                printf "%-*s ", max_len[col], data[row, col]
+            }
+            print ""
+        }
+    }
+    ' "$@"
+}
+alias table='align_columns'
 common() {
     comm -12 <(sort -u "$1") <(sort -u "$2")
 }
