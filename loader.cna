@@ -32,7 +32,9 @@
         "/opt/BOFs/outflank-tool-collection/BOF/DomainInfo/DomainInfo.cna",
         "/opt/BOFs/outflank-tool-collection/BOF/Klist/Klist.cna",
         "/opt/BOFs/outflank-tool-collection/BOF/Askcreds/Askcreds.cna",
-        "/opt/BOFs/ajpc500-bofs/ETW/etw.cna"
+        "/opt/BOFs/ajpc500-bofs/ETW/etw.cna",
+        "/opt/BOFs/tgtdelegation/tgtdelegation.cna",
+        "/opt/BOFs/cookie-monstar/cookie-monster.cna"
 );
 
 # Java packages
