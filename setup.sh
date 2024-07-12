@@ -122,7 +122,12 @@ install_BOFs() {
     git clone https://github.com/RiccardoAncarani/BOFs.git $agressor_path/RiccardoAncarani-BOFs 
     git clone https://github.com/cube0x0/LdapSignCheck.git $agressor_path/LdapSignCheck
     git clone https://github.com/boku7/injectEtwBypass.git $agressor_path/injectEtwBypass
-    git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks    
+    git clone https://github.com/anthemtotheego/Detect-Hooks $agressor_path/Detect-Hooks  
+    git clone https://github.com/connormcgarr/tgtdelegation $agressor_path/tgtdelegation
+    git clone https://github.com/KingOfTheNOPs/cookie-monster.git $agressor_path/cookie-monster
+    cd $agressor_path/cookie-monster
+    python3 -m pip install -r requirements.txt
+    make
     #git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
     git clone https://github.com/outflanknl/C2-Tool-Collection.git $agressor_path/outflank-tool-collection
     cd $agressor_path/outflank-tool-collection/BOF
