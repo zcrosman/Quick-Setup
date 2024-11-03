@@ -552,6 +552,9 @@ install_wl() {
     git clone https://github.com/orwagodfather/WordList.git /usr/share/wordlists/orwagodfather-fuzz-wl
     git clone https://github.com/insidetrust/statistically-likely-usernames.git /usr/share/wordlists/statistically-likely-usernames
     git clone https://github.com/d1r7b46/Default-Email-Repository-Project /usr/share/wordlists/Default-Email-Repo-Project
+    cd /usr/share/wordlists/Default-Email-Repo-Project/
+    rm README.md x-disclaimer 
+    cat * | sort -u -o combined.txt
 }
 
 
