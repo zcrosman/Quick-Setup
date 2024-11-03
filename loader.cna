@@ -34,7 +34,8 @@
         "/opt/BOFs/outflank-tool-collection/BOF/Askcreds/Askcreds.cna",
         "/opt/BOFs/ajpc500-bofs/ETW/etw.cna",
         "/opt/BOFs/tgtdelegation/tgtdelegation.cna",
-        "/opt/BOFs/cookie-monstar/cookie-monster.cna"
+        "/opt/BOFs/cookie-monster/cookie-monster.cna",
+        "/opt/BOFs/smbtakeover/BOF/smbtakover.cna"
 );
 
 # Java packages

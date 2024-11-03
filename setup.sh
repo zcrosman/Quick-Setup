@@ -68,13 +68,12 @@ zsh_setup(){
 
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
     
-
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
-    echo "export PATH=$PATH:/opt/quick-scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
+    # echo "export PATH=$PATH:/opt/scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
     echo "export GOROOT=/usr/lib/go" >> $HOME/.zshrc
     echo "export GOPATH=$HOME/go" >> $HOME/.zshrc
-    echo "export PATH=$GOPATH/bin:$GOROOT/bin:$PATH" >> $HOME/.zshrc
+    echo "export PATH=$GOPATH/bin:$GOROOT/bin:/opt/scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin:$PATH" >> $HOME/.zshrc
 
 
     # exec zsh -l
@@ -128,6 +127,7 @@ install_BOFs() {
     cd $agressor_path/cookie-monster
     python3 -m pip install -r requirements.txt
     make
+    git clone https://github.com/zyn3rgy/smbtakeover $agressor_path/smbtakeover
     #git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
     git clone https://github.com/outflanknl/C2-Tool-Collection.git $agressor_path/outflank-tool-collection
     cd $agressor_path/outflank-tool-collection/BOF
@@ -376,11 +376,6 @@ install_tools() {
     cd $tools_path/Max
     python3 -m pip install -r requirements.txt
 
-    # Passhound
-    git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
-    cd $tools_path/PassHound
-    python3 -m pip install -r requirements.txt
-
     # Powershell Tools
     #PowerSploit (PowerView, PowerUp, etc)
     echo -e "Installing PowerSploit\n"
@@ -403,6 +398,7 @@ check_bh() {
     if [ -d $tools_path'/BloodHound' ]
     then
         echo -e "BloodHound Already Installed...."
+        cp $tools_path/Quick-Setup/customqueries.json ~/.config/bloodhound/customqueries.json 
         #start_bh
     else
         echo -e "BloodHound not installed"
@@ -458,18 +454,18 @@ install_bh() {
         cme_config
     fi
 
-    echo 'Adding custom Bloodhound queries (Hausec + CrackHound)'
+    echo 'Adding custom Bloodhound queries (Hausec + CrackHound + custom)'
     cp $tools_path/Quick-Setup/customqueries.json ~/.config/bloodhound/customqueries.json 
 
 
     # Neo4j
     # Update to share with team
-    # -i -e '/#dbms.connectors.default_listen_address/s/^#//' /etc/neo4j/neo4j.conf
+    sed -i -e '/#dbms.connectors.default_listen_address/s/^#//' /etc/neo4j/neo4j.conf
     # wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add - 
     # echo 'deb https://debian.neo4j.com stable 4.0' > /etc/apt/sources.list.d/neo4j.list 
     # apt-get update 
     # apt-get install -y apt-transport-https neo4j 
-    # systemctl stop neo4j 
+    systemctl restart neo4j 
 }
 
 
@@ -644,10 +640,22 @@ payload_creation () {
 
 # only for me :)
 my_tools () {
+    # 5 days
+    git config --global credential.helper 'cache --timeout=432000'
+    
     mkdir -p ~/nuclei-custom
     git clone https://zcrosman@github.com/zcrosman/nuclei-custom.git ~/nuclei-custom
-    git clone https://zcrosman@github.com/zcrosman/random-scripts.git /opt/quick-scripts   
+    git clone https://zcrosman@github.com/zcrosman/random-scripts.git /opt/scripts  
+    chmod +x /opt/scripts *
     git clone https://zcrosman@github.com/zcrosman/LockPick.git /opt/LockPick 
+    git clone https://zcrosman@github.com/zcrosman/check-access.git /opt/check-access 
+
+    # Passhound (public)
+    git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
+    cd $tools_path/PassHound
+    python3 -m pip install -r requirements.txt
+
+
   
 
 }
