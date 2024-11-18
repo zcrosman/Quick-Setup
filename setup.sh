@@ -44,27 +44,33 @@ setup() {
 }
 
 zsh_setup(){
-    cd ~
+    cd $tools_path/Quick-Setup
     wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O zsh-install.sh
     # patch to remove auto start zsh
-    sed '/exec zsh -l/d' zsh-install.sh
+    #sed '/exec zsh -l/d' zsh-install.sh
     chmod +x zsh-install.sh
     echo "y" | ./zsh-install.sh
 
     
-    sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"jonathan\"/g' $HOME/.zshrc
-    sed -i -e 's/plugins=(git)/plugins=( z zsh-autosuggestions zach copyfile )/g' $HOME/.zshrc
+    sed -i 's/ZSH_THEME=\"robbyrussell\"/ZSH_THEME=\"zach\"/g' $HOME/.zshrc
+    sed -i -e 's/plugins=(git)/plugins=( z zsh-autosuggestions zach-shortcuts zach-terminal-logger copyfile zsh-syntax-highlighting)/g' $HOME/.zshrc
     # https://github.com/zsh-users/zsh-autosuggestions
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
     # QOL - Manually add to history long, command commands?
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    
+    
     echo "Adding \"History\" for auto suggestions"
     cp ~/.zsh_history ~/.zsh_history.bak
     cat /opt/Quick-Setup/misc/fake_history ~/.zsh_history > ~/.zsh_history_tmp
     mv ~/.zsh_history_tmp ~/.zsh_history
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
-    mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach
-    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach.plugin.zsh
+    mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-shortcuts
+    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-shortcuts.plugin.zsh
+    mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-terminal-logger
+    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-terminal-logger.plugin.zsh
+
 
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
     
@@ -398,6 +404,7 @@ check_bh() {
     if [ -d $tools_path'/BloodHound' ]
     then
         echo -e "BloodHound Already Installed...."
+        echo "Copying custom queries to ~/.config/bloodhound/customqueries.json"
         cp $tools_path/Quick-Setup/customqueries.json ~/.config/bloodhound/customqueries.json 
         #start_bh
     else
@@ -517,7 +524,6 @@ win_binaries(){
     # SharPersist
     wget https://github.com/mandiant/SharPersist/releases/download/v1.0.1/SharPersist.exe -P $win_compiled
 
-
     # LaZagne
     wget https://github.com/AlessandroZ/LaZagne/releases/download/2.4.3/lazagne.exe -P $win_compiled
 
@@ -537,6 +543,19 @@ win_binaries(){
     # SQL Server Management Studio (SSMS)
     wget https://aka.ms/ssmsfullsetup -P $win_compiled
 
+    copy2share
+
+}
+
+# copy useful files to working drive
+copy2share() {
+    if [ -d /share/Working ]
+        then
+        mkdir -p /share/Working/zach
+        mkdir -p /share/Working/zach/WindowsBins
+        cp -r $win_binaries /share/Working/zach/WindowsBins.
+        cp -r 
+    fi
 }
 
 install_wl() {
@@ -646,17 +665,27 @@ my_tools () {
     # 5 days
     git config --global credential.helper 'cache --timeout=432000'
     
+    # Private
     mkdir -p ~/nuclei-custom
     git clone https://zcrosman@github.com/zcrosman/nuclei-custom.git ~/nuclei-custom
-    git clone https://zcrosman@github.com/zcrosman/random-scripts.git /opt/scripts  
-    chmod +x /opt/scripts *
-    git clone https://zcrosman@github.com/zcrosman/LockPick.git /opt/LockPick 
-    git clone https://zcrosman@github.com/zcrosman/check-access.git /opt/check-access 
+    git clone https://zcrosman@github.com/zcrosman/random-scripts.git $tools_path/scripts  
+    chmod +x $tools_path/scripts/*
+    git clone https://zcrosman@github.com/zcrosman/LockPick.git $tools_path/LockPick 
+    git clone https://zcrosman@github.com/zcrosman/check-access.git $tools_path/check-access 
+    git clone https://zcrosman@github.com/zcrosman/go-secdump.git $tools_path/go-secdump
+    git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
+    mkdir -p /share/Working/zach
+    cp -r /opt/admi-assit /share/Working/zach
+
+
 
     # Passhound (public)
     git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
     cd $tools_path/PassHound
     python3 -m pip install -r requirements.txt
+
+    git clone https://github.com/zcrosman/git-emails.git $tools_path/git-emails
+    cd $tools_path/PassHound
 
 
   
