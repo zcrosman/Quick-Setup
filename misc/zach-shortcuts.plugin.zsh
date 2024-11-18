@@ -1,17 +1,20 @@
 alias h='history -f'
 alias hg='history -f | grep -i'
 alias nocolor='sed "s/\x1B\[[0-9;]*[mGK]//g"'
-alias www='python3 -m http.server'
 alias ports='netstat -tulanp'
-alias urlenc='python3 -c "import sys, urllib as ul; print ul.quote_plus(sys.argv[1])"'
-alias urldec='python3 -c "import sys, urllib as ul; print ul.unquote_plus(sys.argv[1])"'
+alias urlenc='python3 -c "import sys, urllib.parse as ul; print(ul.quote_plus(sys.argv[1]))"'
+alias urldec='python3 -c "import sys, urllib.parse as ul; print(ul.unquote_plus(sys.argv[1]))"'
 alias lower="tr '[:upper:]' '[:lower:]'"
 alias upper="tr '[:lower:]' '[:upper:]'"
 alias sortc="sort | uniq -c | sort -n"
-alias folder='xdg-open'
 alias calc='libreoffice --calc'
 alias cutc='cut -d "," -f'
 alias httpxl='httpx -p 80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017'
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias folder='open'
+else
+    alias folder='xdg-open'
+fi
 align_columns() {
     awk '
     {
@@ -81,8 +84,8 @@ extract() {
 }
 serve() {
     local port="${1:-8000}"
-    open "http://localhost:${port}/"
     python -m http.server "$port"
+    firefox "http://localhost:${port}/"
 }
 csize() {
     if [ -d "$1" ]; then
