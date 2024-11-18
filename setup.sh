@@ -410,7 +410,7 @@ check_bh() {
 
 
 cme_config() {
-
+    nxc
     conf="$HOME/.nxc/nxc.conf"
     echo "Updating NetExec config in "$conf
 
