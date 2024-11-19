@@ -1,3 +1,4 @@
+#!/bin/bash
 #PATHS
 agressor_path='/opt/BOFs'
 powershell_scripts='/opt/powershell'
@@ -17,6 +18,17 @@ debug='1>/dev/null'
 #     exit
 # fi
 # }
+
+# Check if running as zsh or bash
+if [[ $0 == *zsh ]]; then
+    echo "Running as zsh"
+elif [[ $0 == *bash ]]; then
+    echo "Running as bash"
+else
+    echo "Running under a different shell: $0"
+    echo "Run with bash instead: bash setup.sh 1"
+    exit
+fi
 
 setup() {
     # Initial updates and installs
@@ -67,9 +79,11 @@ zsh_setup(){
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
     mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-shortcuts
-    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-shortcuts.plugin.zsh
+    cp /opt/Quick-Setup/misc/zach-shortcuts.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-shortcuts.plugin.zsh
     mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-terminal-logger
-    cp /opt/Quick-Setup/misc/zach.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-terminal-logger.plugin.zsh
+    cp /opt/Quick-Setup/misc/zach-terminal-logger.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-terminal-logger.plugin.zsh
+
+    cp /opt/Quick-Setup/misc/zach.zsh-theme ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/zach.zsh-theme
 
 
     # https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/copybuffer - copy current command to clipboard (ctrl+o)
@@ -131,7 +145,7 @@ install_BOFs() {
     git clone https://github.com/connormcgarr/tgtdelegation $agressor_path/tgtdelegation
     git clone https://github.com/KingOfTheNOPs/cookie-monster.git $agressor_path/cookie-monster
     cd $agressor_path/cookie-monster
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
     make
     git clone https://github.com/zyn3rgy/smbtakeover $agressor_path/smbtakeover
     #git clone https://github.com/DallasFR/Cobalt-Clip.git $agressor_path/Cobalt-clip
@@ -197,27 +211,27 @@ fast () {
     git clone https://github.com/topotam/PetitPotam.git $tools_path/PetitPotam 
 
     echo -e "Installing coercer\n"
-    python3 -m pip install coercer 
+    python3 -m pip --break-system-packages install  coercer 
 
     # GoWitness
     go install -v github.com/sensepost/gowitness@latest
 
     git clone https://github.com/nyxgeek/onedrive_user_enum $tools_path/onedrive_user_enum
     cd $tools_path/onedrive_user_enum
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
 
     # Go365
     go install https://github.com/optiv/Go365@latest
 
     # TrevorSpray
-    pip install git+https://github.com/blacklanternsecurity/trevorproxy
-    pip install git+https://github.com/blacklanternsecurity/trevorspray
+    pip --break-system-packages install  git+https://github.com/blacklanternsecurity/trevorproxy
+    pip --break-system-packages install  git+https://github.com/blacklanternsecurity/trevorspray
 
     wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration-Linux-v3.5.0.zip
     unzip TeamFiltration-Linux-v3.5.0.zip 
     
     # spraycharles
-    python3 -m pip install pipx
+    python3 -m pip --break-system-packages install  pipx
     python3 -m pipx ensurepath
     python3 -m pipx install spraycharles
 
@@ -233,14 +247,14 @@ fast () {
     # Wordlist Generation
     # git clone --recurse-submodules https://github.com/r3nt0n/bopscrk $tools_path/bobscrk
     # $tools_path/bobscrk
-    # python3 -m pip install -r requirements.txt
-    python3 -m pip install bopscrk
+    # python3 -m pip --break-system-packages install  -r requirements.txt
+    python3 -m pip --break-system-packages install  bopscrk
 
     # MailSniper
     echo -e "Installing MailSniper\n"
     git clone https://github.com/dafthack/MailSniper.git $powershell_scripts/MailSniper 
 
-    python3 -m pip install censys
+    python3 -m pip --break-system-packages install  censys
 
     # WEB Stuff
     go install github.com/tomnomnom/waybackurls@latest
@@ -297,8 +311,8 @@ install_tools() {
 
 
     echo -e "Installing PRET\n"
-    pip install colorama pysnmp 
-    pip install win_unicode_console 
+    pip --break-system-packages install  colorama pysnmp 
+    pip --break-system-packages install  win_unicode_console 
     git clone https://github.com/RUB-NDS/PRET $tools_path/PRET 
 
     echo -e "Installing WebClientServiceScanner\n"
@@ -316,7 +330,7 @@ install_tools() {
     # DonPAPI
     echo -e "Installing DonPAPI\n"
     git clone https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI 
-    python3 -m pip install -r $tools_path/DonPAPI/requirements.txt 
+    python3 -m pip --break-system-packages install  -r $tools_path/DonPAPI/requirements.txt 
 
     # ntlm_theft
     git clone https://github.com/Greenwolf/ntlm_theft.git $tools_path/ntlm_theft
@@ -341,7 +355,7 @@ install_tools() {
     echo -e "Installing noPac\n"
     git clone https://github.com/Ridter/noPac.git $tools_path/noPac 
     cd $tools_path/noPac
-    python3 -m pip install -r requirements.txt 
+    python3 -m pip --break-system-packages install  -r requirements.txt 
 
     # echo -e "Install Pcredz"
     git clone https://github.com/lgandx/PCredz.git $tools_path/Pcredz
@@ -357,30 +371,30 @@ install_tools() {
     # docker build -t CrackMapExec .
 
     # arsenal
-    python3 -m pip install arsenal-cli
+    python3 -m pip --break-system-packages install  arsenal-cli
 
     # pipx install git+https://github.com/blacklanternsecurity/MANSPIDER
     git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
     cd $tools_path/MANSPIDER
-    python3 -m pip install -r requirements.txt
-    python3 -m pip install textract
+    python3 -m pip --break-system-packages install  -r requirements.txt
+    python3 -m pip --break-system-packages install  textract
     sudo apt install -y tesseract-ocr antiword
 
 
     # CrackHound
     git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
     cd $tools_path/CrackHound
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
 
     # Plumhound
     git clone https://github.com/PlumHound/PlumHound.git $tools_path/Plumhound
     cd $tools_path/Plumhound
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
 
     # Max
     git clone https://github.com/knavesec/Max.git $tools_path/Max
     cd $tools_path/Max
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
 
     # Powershell Tools
     #PowerSploit (PowerView, PowerUp, etc)
@@ -457,7 +471,6 @@ install_bh() {
     else
         echo -e "Initializing nxc"
         pipx install git+https://github.com/Pennyw0rth/NetExec
-        nxc
         cme_config
     fi
 
@@ -583,8 +596,8 @@ payload_creation () {
     echo -e "Installing PackMyPayload\n"
     git clone https://github.com/mgeeky/PackMyPayload.git $payload_mod/packmypayload 
     cd $payload_mod/packmypayload
-    pip install --upgrade pip setuptools wheel 
-    python3 -m pip install -r requirements.txt 
+    pip --break-system-packages install  --upgrade pip setuptools wheel 
+    python3 -m pip --break-system-packages install  -r requirements.txt 
 
     #nimpact
     # TODO setup nim
@@ -653,7 +666,7 @@ payload_creation () {
     # Shhhloader
     git clone https://github.com/icyguider/Shhhloader.git $payload_mod/Shhhloader
     cd $tools_path/Shhhloader
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
 
     # ADMI
     # git clone https://github.com/zcrosman/ADMI.git $payload_mod/ADMI
@@ -674,6 +687,8 @@ my_tools () {
     git clone https://zcrosman@github.com/zcrosman/check-access.git $tools_path/check-access 
     git clone https://zcrosman@github.com/zcrosman/go-secdump.git $tools_path/go-secdump
     git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
+    git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
+
     mkdir -p /share/Working/zach
     cp -r /opt/admi-assit /share/Working/zach
 
@@ -682,7 +697,7 @@ my_tools () {
     # Passhound (public)
     git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
     cd $tools_path/PassHound
-    python3 -m pip install -r requirements.txt
+    python3 -m pip --break-system-packages install  -r requirements.txt
 
     git clone https://github.com/zcrosman/git-emails.git $tools_path/git-emails
     cd $tools_path/PassHound
