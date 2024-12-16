@@ -79,9 +79,9 @@ zsh_setup(){
 
     git clone https://github.com/agkozak/zsh-z ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-z
     mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-shortcuts
-    cp /opt/Quick-Setup/misc/zach-shortcuts.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-shortcuts.plugin.zsh
+    cp /opt/Quick-Setup/misc/zach-shortcuts.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-shortcuts/zach-shortcuts.plugin.zsh
     mkdir ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-terminal-logger
-    cp /opt/Quick-Setup/misc/zach-terminal-logger.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach/zach-terminal-logger.plugin.zsh
+    cp /opt/Quick-Setup/misc/zach-terminal-logger.plugin.zsh ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zach-terminal-logger/zach-terminal-logger.plugin.zsh
 
     cp /opt/Quick-Setup/misc/zach.zsh-theme ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/themes/zach.zsh-theme
 
@@ -292,7 +292,6 @@ fast () {
 
 install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
-    cme_config
     fast
     #BloodHound
     check_bh
