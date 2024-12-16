@@ -565,7 +565,7 @@ copy2share() {
         then
         mkdir -p /share/Working/zach
         mkdir -p /share/Working/zach/WindowsBins
-        cp -r $win_binaries /share/Working/zach/WindowsBins.
+        cp -r $win_binaries /share/Working/zach/WindowsBins/.
         cp -r 
     fi
 }
