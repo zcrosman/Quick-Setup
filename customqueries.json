@@ -1198,12 +1198,12 @@
 			]
 		},
         {
-			"name": "Better Search - User - Username/Description/Title (default: president)",
+			"name": "Better Search - User - Username/Description/Title (default: scada)",
 			"category": "In testing (could be wrong)",
 			"queryList": [
 				{
 					"final": true,
-					"query": "with \"president\" as search match (u:User) WHERE toLower(u.displayname) CONTAINS search OR toLower(u.distinguisedname) CONTAINS search WHERE toLower(u.title) CONTAINS search WHERE toLower(u.description) CONTAINS search RETURN u"
+					"query": "with \"scada\" as search match (u:User) WHERE toLower(u.displayname) CONTAINS search OR toLower(u.distinguisedname) CONTAINS search OR toLower(u.title) CONTAINS search OR toLower(u.description) CONTAINS search RETURN u"
                 }
 			]
 		},
