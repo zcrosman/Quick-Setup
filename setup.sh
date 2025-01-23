@@ -271,6 +271,8 @@ fast () {
     go install github.com/projectdiscovery/httpx/cmd/httpx@latest
     go install github.com/projectdiscovery/uncover/cmd/uncover@latest
     go install github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+    go install github.com/projectdiscovery/alterx/cmd/alterx@latest
+    go install github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
 
     git clone https://github.com/sa7mon/S3Scanner.git $tools_path/s3scanner
     cd $tools_path/s3scanner
@@ -292,7 +294,6 @@ fast () {
 
 install_tools() {
     echo -e "\n\n\n Installing Kali tools\n\n\n"
-    fast
     #BloodHound
     check_bh
     pip3 install bofhound
@@ -686,7 +687,6 @@ my_tools () {
     git clone https://zcrosman@github.com/zcrosman/check-access.git $tools_path/check-access 
     git clone https://zcrosman@github.com/zcrosman/go-secdump.git $tools_path/go-secdump
     git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
-    git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
 
     mkdir -p /share/Working/zach
     cp -r /opt/admi-assit /share/Working/zach
@@ -736,8 +736,8 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;install_wl;my_tools;;
-                2) setup;check_go;install_BOFs;install_tools;payload_creation;win_binaries;win_source;install_wl;check_bh;my_tools;;
+                1) setup;check_go;install_BOFs;install_tools;fast;payload_creation;win_binaries;install_wl;my_tools;;
+                2) setup;check_go;install_BOFs;install_tools;fast;payload_creation;win_binaries;win_source;install_wl;check_bh;my_tools;;
                 3) win_binaries;;
                 4) win_source;;
                 5) setup;check_go;install_tools;;
