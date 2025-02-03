@@ -34,6 +34,7 @@ setup() {
     # Initial updates and installs
     sudo apt update 
     sudo apt install -y git-all python3-pip pipx git
+    python3 -m pip install --upgrade pip
     sudo chown -R $USER:$USER /opt
     #zsh_setup
     # For docker
