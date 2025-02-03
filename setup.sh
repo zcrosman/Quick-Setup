@@ -20,15 +20,15 @@ debug='1>/dev/null'
 # }
 
 # Check if running as zsh or bash
-if [[ $0 == *zsh ]]; then
-    echo "Running as zsh"
-elif [[ $0 == *bash ]]; then
-    echo "Running as bash"
-else
-    echo "Running under a different shell: $0"
-    echo "Run with bash instead: bash setup.sh 1"
-    exit
-fi
+# if [[ $0 == *zsh ]]; then
+#     echo "Running as zsh"
+# elif [[ $0 == *bash ]]; then
+#     echo "Running as bash"
+# else
+#     echo "Running under a different shell: $0"
+#     echo "Run with bash instead: bash setup.sh 1"
+#     exit
+# fi
 
 setup() {
     # Initial updates and installs
