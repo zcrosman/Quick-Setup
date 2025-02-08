@@ -197,6 +197,8 @@ fast () {
     cd $tools_path/aquatone 
     ./build.sh 
 
+    apt install proxychains4 libreoffice -y
+
     # static linux binaries (build as needed)
     # this version of the script does not build each binary
     echo -e "Installing Linux static binaries\n"
