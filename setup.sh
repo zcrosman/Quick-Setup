@@ -548,6 +548,7 @@ win_binaries(){
 
     # SharpHound
     wget https://github.com/BloodHoundAD/SharpHound/releases/download/v1.0.3/SharpHound-v1.0.3.zip -P $win_compiled
+    wget https://github.com/SpecterOps/BloodHound-Legacy/blob/master/Collectors/SharpHound.exe -P $win_compiled
     cd $win_compiled
     unzip SharpHound-v1.0.3.zip
 
@@ -569,7 +570,7 @@ copy2share() {
         then
         mkdir -p /share/Working/zach
         mkdir -p /share/Working/zach/WindowsBins
-        cp -r $win_binaries /share/Working/zach/WindowsBins/.
+        cp -r $win_compiled /share/Working/zach/WindowsBins/.
         cp -r 
     fi
 }
