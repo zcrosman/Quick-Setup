@@ -1217,8 +1217,8 @@
                 }
 			]
 		},
-        {
-			"name": "IT related",
+        	{
+			"name": "IT related acoounts",
 			"category": "In testing (could be wrong)",
 			"queryList": [
 				{
@@ -1227,7 +1227,17 @@
                 }
 			]
 		},
-        {
+	        {
+			"name": "IT related accounts with sessions",
+			"category": "In testing (could be wrong)",
+			"queryList": [
+				{
+					"final": true,
+					"query": "match (u:User) where toLower(u.title) contains "network" or toLower(u.title) contains "admin" or toLower(u.title) contains "system" or toLower(u.title) contains "security" MATCH p = (c:Computer)-[:HasSession]->(u) return p"
+                		}
+			]
+		},
+        	{
 			"name": "Service accounts related to SQL",
 			"category": "In testing (could be wrong)",
 			"queryList": [
