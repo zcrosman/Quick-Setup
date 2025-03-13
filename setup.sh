@@ -571,7 +571,6 @@ copy2share() {
         mkdir -p /share/Working/zach
         mkdir -p /share/Working/zach/WindowsBins
         cp -r $win_compiled /share/Working/zach/WindowsBins/.
-        cp -r 
     fi
 }
 
