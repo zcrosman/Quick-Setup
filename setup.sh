@@ -489,6 +489,8 @@ install_bh() {
     # apt-get update 
     # apt-get install -y apt-transport-https neo4j 
     systemctl restart neo4j 
+    cp $tools_path/Quick-Setup/customqueries.json ~/.config/bloodhound/customqueries.json 
+
 }
 
 
