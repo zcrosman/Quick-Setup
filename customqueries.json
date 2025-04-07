@@ -1170,7 +1170,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(network|admin|system|security|cyber)\\b.*\" OR u.description =~ \"(?i).*\\b(network|admin|system|security|cyber)\\b.*\" RETURN u"
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(network|admin|system|security|cyber)\\b.*\" OR toLower(u.description) =~ \".*(network|admin|system|security|cyber).*\" RETURN u"
         }
       ]
     },
@@ -1210,7 +1210,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (n) WHERE (n:User OR n:Group) AND (n.name =~ \"(?i).*\\b(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|git)\\b.*\" OR n.description =~ \"(?i).*\\b(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|manageengine|git)\\b.*\") RETURN n"        }
+          "query": "MATCH (n) WHERE (n:User OR n:Group) AND (toLower(n.name) =~ \".*(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|git)\\b.*\" OR toLower(n.description) =~ \"(.*(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|manageengine|git).*\") RETURN n"        }
       ]
     },
     {
@@ -1219,7 +1219,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (n:User) WHERE n.hasspn = true AND ANY(spn IN n.serviceprincipalnames WHERE spn =~ \"(?i).*kerberos\\.okta\\.com.*|.*kerberos\\.pingone.*|.*autologin\\.microsoftazuread-sso\\.com.*\") RETURN n"
+          "query": "MATCH (n:User) WHERE n.hasspn = true AND ANY(spn IN n.serviceprincipalnames WHERE toLower(spn) =~ \".*(kerberos\\.okta\\.com|kerberos\\.pingone|autologin\\.microsoftazuread-sso\\.com).*\") RETURN n"
         } 
       ]
     },    {
@@ -1247,8 +1247,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(president|ceo|chief executive|chief exec|founder|managing director|chairman)\\b.*\" OR u.description =~ \"(?i).*\\b(president|ceo|chief executive|chief exec|founder|managing director|chairman)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(president|ceo|chief executive|chief exec|founder|managing director|chairman).*\" OR toLower(u.description) =~ \".*(president|ceo|chief executive|chief exec|founder|managing director|chairman).*\" RETURN u"        }
       ]
     },
     {
@@ -1257,8 +1256,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa)\\b.*\" OR u.description =~ \"(?i).*\\b(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa).*\" OR toLower(u.description) =~ \".*(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa).*\" RETURN u"        }
       ]
     },
     {
@@ -1267,8 +1265,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(hr|human resources|recruitment|recruiter|talent|people operations|employee relations)\\b.*\" OR u.description =~ \"(?i).*\\b(hr|human resources|recruitment|recruiter|talent|people operations|employee relations)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(hr|human resources|recruitment|recruiter|talent|people operations|employee relations).*\" OR toLower(u.description) =~ \".*(hr|human resources|recruitment|recruiter|talent|people operations|employee relations).*\" RETURN u"        }
       ]
     },
     {
@@ -1277,8 +1274,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(dev|developer|software|engineer|programmer|programming|coder|development)\\b.*\" OR u.description =~ \"(?i).*\\b(dev|developer|software|engineer|programmer|programming|coder|development)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(dev|developer|software|engineer|programmer|programming|coder|development).*\" OR toLower(u.description) =~ \".*(dev|developer|software|engineer|programmer|programming|coder|development).*\" RETURN u"        }
       ]
     },
     {
@@ -1287,8 +1283,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(c\\-suite|chief|cfo|cto|cio|coo|cmo|chro|executive)\\b.*\" OR u.description =~ \"(?i).*\\b(c\\-suite|chief|cfo|cto|cio|coo|cmo|chro|executive)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(c\\-suite|chief|cfo|cto|cio|coo|cmo|chro|executive).*\" OR toLower(u.description) =~ \".*(c\\-suite|chief|cfo|cto|cio|coo|cmo|chro|executive).*\" RETURN u"        }
       ]
     },
     {
@@ -1297,8 +1292,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(board|director|board member|trustee|advisory board|board of directors)\\b.*\" OR u.description =~ \"(?i).*\\b(board|director|board member|trustee|advisory board|board of directors)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(board|director|board member|trustee|advisory board|board of directors).*\" OR toLower(u.description) =~ \".*(board|director|board member|trustee|advisory board|board of directors).*\" RETURN u"        }
       ]
     },
     {
@@ -1307,8 +1301,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(legal|attorney|counsel|lawyer|compliance|regulatory)\\b.*\" OR u.description =~ \"(?i).*\\b(legal|attorney|counsel|lawyer|compliance|regulatory)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(legal|attorney|counsel|lawyer|compliance|regulatory).*\" OR toLower(u.description) =~ \".*(legal|attorney|counsel|lawyer|compliance|regulatory).*\" RETURN u"        }
       ]
     },
     {
@@ -1317,8 +1310,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(marketing|communications|comm|public relations|pr|branding)\\b.*\" OR u.description =~ \"(?i).*\\b(marketing|communications|comm|public relations|pr|branding)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(marketing|communications|comm|public relations|pr|branding).*\" OR toLower(u.description) =~ \".*(marketing|communications|comm|public relations|pr|branding).*\" RETURN u"        }
       ]
     },
     {
@@ -1327,8 +1319,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(sales|account manager|business development|bd|sales executive|sales rep)\\b.*\" OR u.description =~ \"(?i).*\\b(sales|account manager|business development|bd|sales executive|sales rep)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(sales|account manager|business development|bd|sales executive|sales rep).*\" OR toLower(u.description) =~ \".*(sales|account manager|business development|bd|sales executive|sales rep).*\" RETURN u"        }
       ]
     },
     {
@@ -1337,8 +1328,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(facilities|office manager|operations|logistics|facility management)\\b.*\" OR u.description =~ \"(?i).*\\b(facilities|office manager|operations|logistics|facility management)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(facilities|office manager|operations|logistics|facility management).*\" OR toLower(u.description) =~ \".*(facilities|office manager|operations|logistics|facility management).*\" RETURN u"        }
       ]
     },
     {
@@ -1347,8 +1337,7 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE u.title =~ \"(?i).*\\b(helpdesk|support|technical support|it support|service desk)\\b.*\" OR u.description =~ \"(?i).*\\b(helpdesk|support|technical support|it support|service desk)\\b.*\" RETURN u"
-        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(helpdesk|support|technical support|it support|service desk).*\" OR toLower(u.description) =~ \".*(helpdesk|support|technical support|it support|service desk).*\" RETURN u"        }
       ]
     },
     {
