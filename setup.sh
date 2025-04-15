@@ -92,7 +92,8 @@ zsh_setup(){
     # TODO - Finish testing
     # TODO - Update the plugins in ~/.zshrc
     # echo "export PATH=$PATH:/opt/scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin" >> $HOME/.zshrc
-    echo "export GOROOT=/usr/local/go" >> $HOME/.zshrc
+    GOFIX="/usr/lib/go"; go version > /dev/null 2>&1 || export GOROOT="/usr/local/go"; # because i swap between different images. checks which one is right
+    echo "export GOROOT=$GOFIX" >> $HOME/.zshrc
     echo "export GOPATH=$HOME/go" >> $HOME/.zshrc
     echo "export PATH=$GOPATH/bin:$GOROOT/bin:/opt/scripts:$HOME/go/bin:$HOME/.local/bin:/usr/local/bin:$PATH" >> $HOME/.zshrc
 
