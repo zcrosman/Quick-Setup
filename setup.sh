@@ -693,6 +693,8 @@ my_tools () {
     git clone https://zcrosman@github.com/zcrosman/go-secdump.git $tools_path/go-secdump
     git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
     git clone https://zcrosman@github.com/zcrosman/rtsp-peek.git $tools_path/rtsp-peek
+    git clone https://zcrosman@github.com/zcrosman/bnxc.git $tools_path/bnxc
+    git clone https://zcrosman@github.com/zcrosman/bimpacket.git $tools_path/bimpacket
 
     mkdir -p /share/Working/zach
     cp -r /opt/admi-assit /share/Working/zach
