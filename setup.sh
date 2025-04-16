@@ -674,8 +674,24 @@ payload_creation () {
     cd $tools_path/Shhhloader
     python3 -m pip --break-system-packages install  -r requirements.txt
 
-    # ADMI
-    # git clone https://github.com/zcrosman/ADMI.git $payload_mod/ADMI
+}
+
+install_pythons () {
+    cd ~/Downloads
+    wget https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz
+    tar -xf Python-3.11.0.tgz
+    cd Python-3.11.0
+    ./configure --enable-optimizations
+    make -j $(nproc)
+    sudo make altinstall
+    
+    cd ~/Downloads
+    wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz
+    tar -xf Python-3.9.0.tgz
+    cd Python-3.9.0
+    ./configure --enable-optimizations
+    make -j $(nproc)
+    sudo make altinstall
 
 }
 
@@ -745,8 +761,8 @@ options() {
     if [ -n "$1" ]
         then
             case $1 in
-                1) setup;check_go;install_BOFs;install_tools;fast;payload_creation;win_binaries;install_wl;my_tools;;
-                2) setup;check_go;install_BOFs;install_tools;fast;payload_creation;win_binaries;win_source;install_wl;check_bh;my_tools;;
+                1) setup;check_go;install_BOFs;install_tools;fast;payload_creation;win_binaries;install_wl;my_tools;install_pythons;;
+                2) setup;check_go;install_BOFs;install_tools;fast;payload_creation;win_binaries;win_source;install_wl;check_bh;my_tools;install_pythons;;
                 3) win_binaries;;
                 4) win_source;;
                 5) setup;check_go;install_tools;;
