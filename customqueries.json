@@ -191,7 +191,7 @@
       ]
     },
     {
-      "name": "Find computers that allow unconstrained delegation that AREN’T domain controllers.",
+      "name": "Find computers that allow unconstrained delegation that AREN'T domain controllers.",
       "queryList": [
         {
           "final": true,
@@ -331,40 +331,6 @@
         {
           "final": true,
           "query": "MATCH p=(n)-[r]->(m) WHERE NOT n.domain = m.domain RETURN p"
-        }
-      ]
-    },
-    {
-      "name": "Find all sessions a user in a specific domain has",
-      "requireNodeSelect": true,
-      "queryList": [
-        {
-          "final": false,
-          "title": "Select source domain...",
-          "query": "MATCH (n:Domain) RETURN n.name ORDER BY n.name"
-        },
-        {
-          "final": true,
-          "query": "MATCH p=(m:Computer)-[r:HasSession]->(n:User {domain:{result}}) RETURN p",
-          "startNode": "{}",
-          "allowCollapse": false
-        }
-      ]
-    },
-    {
-      "name": "Find an object from domain 'A' that can do anything to a foreign object",
-      "requireNodeSelect": true,
-      "queryList": [
-        {
-          "final": false,
-          "title": "Select source domain...",
-          "query": "MATCH (n:Domain) RETURN n.name ORDER BY n.name"
-        },
-        {
-          "final": true,
-          "query": "MATCH p=(n {domain:{result}})-[r]->(d) WHERE NOT d.domain=n.domain RETURN p",
-          "startNode": "{}",
-          "allowCollapse": false
         }
       ]
     },
@@ -853,188 +819,6 @@
       ]
     },
     {
-      "name": "Show Enrollment Rights for Certificate Template",
-      "category": "Certipy - Certificates",
-      "queryList": [
-        {
-          "final": false,
-          "title": "Select a Certificate Template...",
-          "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' RETURN n.name"
-        },
-        {
-          "final": true,
-          "query": "MATCH p=(g)-[:Enroll|AutoEnroll]->(n:GPO {name:$result}) WHERE n.type = 'Certificate Template' return p",
-          "allowCollapse": false
-        }
-      ]
-    },
-    {
-      "name": "Show Rights for Certificate Authority",
-      "category": "Certipy - Certificates",
-      "queryList": [
-        {
-          "final": false,
-          "title": "Select a Certificate Authority...",
-          "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' RETURN n.name"
-        },
-        {
-          "final": true,
-          "query": "MATCH p=(g)-[:ManageCa|ManageCertificates|Auditor|Operator|Read|Enroll]->(n:GPO {name:$result}) return p",
-          "allowCollapse": false
-        }
-      ]
-    },
-    {
-      "name": "Find Misconfigured Certificate Templates (ESC1)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true  RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Misconfigured Certificate Templates from Owned Principals (ESC1)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true return p"
-        }
-      ]
-    },
-    {
-      "name": "Find Misconfigured Certificate Templates (ESC2)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage`)  RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Misconfigured Certificate Templates from Owned Principals (ESC2)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage`) return p"
-        }
-      ]
-    },
-    {
-      "name": "Find Enrollment Agent Templates (ESC3)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage` or 'Certificate Request Agent' IN n.`Extended Key Usage`)  RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Enrollment Agent Templates from Owned Principals (ESC3)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true and (n.`Extended Key Usage` = [] or 'Any Purpose' IN n.`Extended Key Usage` or 'Certificate Request Agent' IN n.`Extended Key Usage`) return p"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Vulnerable Certificate Template Access Control (ESC4)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=shortestPath((g)-[:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Certificate Template' and n.`Enabled` = true RETURN p"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Vulnerable Certificate Template Access Control from Owned Principals (ESC4)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=allShortestPaths((g {owned:true})-[r*1..]->(n:GPO)) WHERE g<>n and n.type = 'Certificate Template' and n.Enabled = true and NONE(x in relationships(p) WHERE type(x) = 'Enroll' or type(x) = 'AutoEnroll') return p"
-        }
-      ]
-    },
-    {
-      "name": "Find Certificate Authorities with User Specified SAN (ESC6)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' and n.`User Specified SAN` = 'Enabled' RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Vulnerable Certificate Authority Access Control (ESC7)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=shortestPath((g)-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|ManageCa|ManageCertificates*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Enrollment Service' RETURN p"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Vulnerable Certificate Authority Access Control from Owned Principals (ESC7)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=allShortestPaths((g {owned:true})-[*1..]->(n:GPO)) WHERE  g<>n and n.type = 'Enrollment Service' and NONE(x in relationships(p) WHERE type(x) = 'Enroll' or type(x) = 'AutoEnroll') RETURN p"
-        }
-      ]
-    },
-    {
-      "name": "Find Certificate Authorities with HTTP Web Enrollment (ESC8)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Enrollment Service' and n.`Web Enrollment` = 'Enabled' RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Find Unsecured Certificate Templates (ESC9)",
-      "category": "Certipy - Domain Escalation",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and n.`Enrollee Supplies Subject` = true and n.`Client Authentication` = true and n.`Enabled` = true  RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Find Unsecured Certificate Templates (ESC9)",
-      "category": "Certipy - PKI",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH (n:GPO) WHERE n.type = 'Certificate Template' and 'NoSecurityExtension' in n.`Enrollment Flag` and n.`Enabled` = true  RETURN n"
-        }
-      ]
-    },
-    {
-      "name": "Shortest Paths to Unsecured Certificate Templates from Owned Principals (ESC9)",
-      "category": "Certipy - PKI",
-      "queryList": [
-        {
-          "final": true,
-          "query": "MATCH p=allShortestPaths((g {owned:true})-[r*1..]->(n:GPO)) WHERE n.type = 'Certificate Template' and g<>n and 'NoSecurityExtension' in n.`Enrollment Flag` and n.`Enabled` = true and NONE(rel in r WHERE type(rel) in ['EnabledBy','Read','ManageCa','ManageCertificates']) return p"
-        }
-      ]
-    },
-    {
       "name": "Accounts that have never logged in",
       "category": "Interesting Users",
       "queryList": [
@@ -1210,7 +994,8 @@
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (n) WHERE (n:User OR n:Group) AND (toLower(n.name) =~ \".*(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|git)\\b.*\" OR toLower(n.description) =~ \"(.*(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|manageengine|git).*\") RETURN n"        }
+          "query": "MATCH (n) WHERE (n:User OR n:Group) AND toLower(n.name) =~ \".*(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|git).*\" OR toLower(n.description) =~ \".*(esxi|vmware|manage engine|solarwinds|proxmox|crowdstrike|secureworks|huntress|defender|cybereason|sophos|symantec|sentinelone|cortex|xdr|prtg|manageengine|git).*\" RETURN n"        
+        }
       ]
     },
     {
@@ -1222,122 +1007,115 @@
           "query": "MATCH (n:User) WHERE n.hasspn = true AND ANY(spn IN n.serviceprincipalnames WHERE toLower(spn) =~ \".*(kerberos\\.okta\\.com|kerberos\\.pingone|autologin\\.microsoftazuread-sso\\.com).*\") RETURN n"
         } 
       ]
-    },    {
-      "name": "test2",
-      "category": "In testing (could be wrong)",
-      "queryList": [
-        {
-          "final": true,
-          "query": ""
-        }
-      ]
-    },    {
-      "name": "test3",
-      "category": "In testing (could be wrong)",
-      "queryList": [
-        {
-          "final": true,
-          "query": ""
-        }
-      ]
     },
     {
       "name": "President/CEO related employees",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(president|ceo|chief executive|chief exec|founder|managing director|chairman).*\" OR toLower(u.description) =~ \".*(president|ceo|chief executive|chief exec|founder|managing director|chairman).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(president|ceo|chief executive|chief exec|founder|managing director|chairman).*\" OR toLower(u.description) =~ \".*(president|ceo|chief executive|chief exec|founder|managing director|chairman).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Accounting related employees",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa).*\" OR toLower(u.description) =~ \".*(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa).*\" OR toLower(u.description) =~ \".*(accounting|accountant|finance|financial|controller|auditor|bookkeeper|bookkeeping|cpa).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "HR related employees",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(hr|human resources|recruitment|recruiter|talent|people operations|employee relations).*\" OR toLower(u.description) =~ \".*(hr|human resources|recruitment|recruiter|talent|people operations|employee relations).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(hr|human resources|recruitment|recruiter|talent|people operations|employee relations).*\" OR toLower(u.description) =~ \".*(hr|human resources|recruitment|recruiter|talent|people operations|employee relations).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Dev related employees",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(dev|developer|software|engineer|programmer|programming|coder|development).*\" OR toLower(u.description) =~ \".*(dev|developer|software|engineer|programmer|programming|coder|development).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(dev|developer|software|engineer|programmer|programming|coder|development).*\" OR toLower(u.description) =~ \".*(dev|developer|software|engineer|programmer|programming|coder|development).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "C Suite employees",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(c\\-suite|chief|cfo|cto|cio|coo|cmo|chro|executive).*\" OR toLower(u.description) =~ \".*(c\\-suite|chief|cfo|cto|cio|coo|cmo|chro|executive).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(c-suite|chief|cfo|cto|cio|coo|cmo|chro|executive).*\" OR toLower(u.description) =~ \".*(c-suite|chief|cfo|cto|cio|coo|cmo|chro|executive).*\" RETURN u"    
+        }
       ]
     },
     {
       "name": "Board of Directors",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(board|director|board member|trustee|advisory board|board of directors).*\" OR toLower(u.description) =~ \".*(board|director|board member|trustee|advisory board|board of directors).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(board|director|board member|trustee|advisory board|board of directors).*\" OR toLower(u.description) =~ \".*(board|director|board member|trustee|advisory board|board of directors).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Legal / Compliance",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(legal|attorney|counsel|lawyer|compliance|regulatory).*\" OR toLower(u.description) =~ \".*(legal|attorney|counsel|lawyer|compliance|regulatory).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(legal|attorney|counsel|lawyer|compliance|regulatory).*\" OR toLower(u.description) =~ \".*(legal|attorney|counsel|lawyer|compliance|regulatory).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Marketing / Communications",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(marketing|communications|comm|public relations|pr|branding).*\" OR toLower(u.description) =~ \".*(marketing|communications|comm|public relations|pr|branding).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(marketing|communications|comm|public relations|pr|branding).*\" OR toLower(u.description) =~ \".*(marketing|communications|comm|public relations|pr|branding).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Sales / Business Development",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(sales|account manager|business development|bd|sales executive|sales rep).*\" OR toLower(u.description) =~ \".*(sales|account manager|business development|bd|sales executive|sales rep).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(sales|account manager|business development|bd|sales executive|sales rep).*\" OR toLower(u.description) =~ \".*(sales|account manager|business development|bd|sales executive|sales rep).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Facilities / Operations Management",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(facilities|office manager|operations|logistics|facility management).*\" OR toLower(u.description) =~ \".*(facilities|office manager|operations|logistics|facility management).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(facilities|office manager|operations|logistics|facility management).*\" OR toLower(u.description) =~ \".*(facilities|office manager|operations|logistics|facility management).*\" RETURN u"
+        }
       ]
     },
     {
       "name": "Technical Support / Helpdesk",
-      "category": "In testing (could be wrong)",
+      "category": "Job Positions",
       "queryList": [
         {
           "final": true,
-          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(helpdesk|support|technical support|it support|service desk).*\" OR toLower(u.description) =~ \".*(helpdesk|support|technical support|it support|service desk).*\" RETURN u"        }
+          "query": "MATCH (u:User) WHERE toLower(u.title) =~ \".*(helpdesk|support|technical support|it support|service desk).*\" OR toLower(u.description) =~ \".*(helpdesk|support|technical support|it support|service desk).*\" RETURN u"
+        }
       ]
     },
     {
@@ -1359,7 +1137,146 @@
           "query": "MATCH (u:User)-[:MemberOf*1..]->(g:Group) WHERE g.highvalue = true WITH COLLECT(u.samaccountname) AS highValueUsers MATCH (u:User) WHERE NOT u.samaccountname IN highValueUsers OPTIONAL MATCH p1 = (u)-[:AdminTo|GenericWrite|ChangePassword|GenericAll|Owns|WriteDacl|WriteOwner|GpLink]->(c) OPTIONAL MATCH p2 = (u)-[:MemberOf*1..]->(g:Group)-[:AdminTo|GenericWrite|ChangePassword|GenericAll|Owns|WriteDacl|WriteOwner|GpLink]->(c2) RETURN DISTINCT p1,p2"
         }
       ]
+    },
+    {
+      "name": "All owned users and their direct relationships",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r]->(n) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Local admin rights through direct AdminTo",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:AdminTo]->(c:Computer) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Local admin rights through group membership",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:MemberOf*1..]->(g:Group)-[r2:AdminTo]->(c:Computer) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Control over other domain accounts",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|ForceChangePassword]->(u2:User) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Control over groups",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|AddMember]->(g:Group) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Control over computers",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner]->(c:Computer) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Paths to high value targets",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=shortestPath((u:User {owned:true})-[*1..]->(n {highvalue:true})) WHERE u<>n RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Paths to Domain Admins",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=shortestPath((u:User {owned:true})-[*1..]->(g:Group)) WHERE g.objectid ENDS WITH '-512' RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Service accounts with admin rights",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH (u:User {owned:true}) WHERE EXISTS(u.servicePrincipalName) MATCH p=(u)-[r:AdminTo|GenericAll|GenericWrite|Owns]->(n) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Accounts with password sharing",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:SharesPassword]->(n) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Accounts with LAPS access",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:ReadLAPSPassword]->(c:Computer) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Accounts with SQL admin rights",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:SQLAdmin]->(c:Computer) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Accounts with RDP access",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:CanRDP]->(c:Computer) RETURN p"
+        }
+      ]
+    },
+    {
+      "name": "Accounts with GPO control",
+      "category": "Owned Users",
+      "queryList": [
+        {
+          "final": true,
+          "query": "MATCH p=(u:User {owned:true})-[r:GenericAll|GenericWrite|Owns|WriteDacl|WriteOwner|GpLink]->(g:GPO) RETURN p"
+        }
+      ]
     }
-    
   ]
 }
