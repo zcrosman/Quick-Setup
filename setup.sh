@@ -113,7 +113,7 @@ check_go(){
 install_go(){
     echo "\n Installling Go\n"
     sudo apt install -y golang 
-    export GOROOT=/usr/lib/go
+    export GOROOT=/usr/local/go
     export GOPATH=$HOME/go
     export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
     # source ~/.bashrc
