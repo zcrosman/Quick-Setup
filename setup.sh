@@ -6,8 +6,6 @@ tools_path='/opt'
 win_source='/opt/Windows/Source'
 win_compiled='/opt/Windows/Compiled'
 payload_mod='/opt/payloads'   
-debug=''
-debug='1>/dev/null'
 
 # Setup logging
 LOG_DIR="$HOME"
@@ -865,62 +863,13 @@ install_pythons () {
 # only for me :)
 my_tools () {
     log "Installing personal tools"
-        # Configure Git
+    # Configure Git
     log_sub "Setting Git credential cache timeout (5 days)"
     git config --global credential.helper 'cache --timeout=432000'
-    # Prompt for GitHub token
-    log_sub "GitHub token required for private repositories"
-    github_token=$(prompt_user "Enter your GitHub personal access token: ")
-    
-    if [ -z "$github_token" ]; then
-        log_error "No GitHub token provided, cannot clone private repositories"
-        return 1
-    fi
-    
 
+    # Install public repositories first
+    log_sub "Installing public repositories"
     
-    # Store GitHub token temporarily
-    log_sub "Storing GitHub credentials"
-    echo "https://$github_token:x-oauth-basic@github.com" > ~/.git-credentials
-    git config --global credential.helper 'store --file ~/.git-credentials'
-    
-    log_sub "Cloning private repositories"
-    # Private
-    mkdir -p ~/nuclei-custom
-    
-    log_sub "Cloning nuclei-custom"
-    git clone https://zcrosman@github.com/zcrosman/nuclei-custom.git ~/nuclei-custom
-    
-    log_sub "Cloning random-scripts"
-    git clone https://zcrosman@github.com/zcrosman/random-scripts.git $tools_path/scripts  
-    chmod +x $tools_path/scripts/*
-    
-    log_sub "Cloning LockPick"
-    git clone https://zcrosman@github.com/zcrosman/LockPick.git $tools_path/LockPick 
-    
-    log_sub "Cloning check-access"
-    git clone https://zcrosman@github.com/zcrosman/check-access.git $tools_path/check-access 
-    
-    log_sub "Cloning go-secdump"
-    git clone https://zcrosman@github.com/zcrosman/go-secdump.git $tools_path/go-secdump-custom
-    
-    log_sub "Cloning admi-assist"
-    git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
-    
-    log_sub "Cloning rtsp-peek"
-    git clone https://zcrosman@github.com/zcrosman/rtsp-peek.git $tools_path/rtsp-peek
-    
-    log_sub "Cloning bnxc"
-    git clone https://zcrosman@github.com/zcrosman/bnxc.git $tools_path/bnxc
-    
-    log_sub "Cloning bimpacket"
-    git clone https://zcrosman@github.com/zcrosman/bimpacket.git $tools_path/bimpacket
-
-    log_sub "Creating shared working directory"
-    mkdir -p /share/Working/zach
-    log_sub "Copying admi-assist to shared directory"
-    cp -r /opt/admi-assit /share/Working/zach
-
     log_sub "Cloning PassHound"
     git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
     cd $tools_path/PassHound
@@ -929,12 +878,62 @@ my_tools () {
 
     log_sub "Cloning git-emails"
     git clone https://github.com/zcrosman/git-emails.git $tools_path/git-emails
+
+    # Prompt for GitHub token for private repositories
+    log_sub "GitHub token required for private repositories"
+    github_token=$(prompt_user "Enter your GitHub personal access token (press Enter to skip private repos): ")
     
-    # Clean up credentials for security
-    log_sub "Cleaning up GitHub credentials"
-    rm -f ~/.git-credentials
-    git config --global --unset credential.helper
-    git config --global credential.helper 'cache --timeout=432000'
+    if [ -n "$github_token" ]; then
+        # Store GitHub token temporarily
+        log_sub "Storing GitHub credentials"
+        echo "https://$github_token:x-oauth-basic@github.com" > ~/.git-credentials
+        git config --global credential.helper 'store --file ~/.git-credentials'
+        
+        log_sub "Cloning private repositories"
+        # Private
+        mkdir -p ~/nuclei-custom
+        
+        log_sub "Cloning nuclei-custom"
+        git clone https://zcrosman@github.com/zcrosman/nuclei-custom.git ~/nuclei-custom
+        
+        log_sub "Cloning random-scripts"
+        git clone https://zcrosman@github.com/zcrosman/random-scripts.git $tools_path/scripts  
+        chmod +x $tools_path/scripts/*
+        
+        log_sub "Cloning LockPick"
+        git clone https://zcrosman@github.com/zcrosman/LockPick.git $tools_path/LockPick 
+        
+        log_sub "Cloning check-access"
+        git clone https://zcrosman@github.com/zcrosman/check-access.git $tools_path/check-access 
+        
+        log_sub "Cloning go-secdump"
+        git clone https://zcrosman@github.com/zcrosman/go-secdump.git $tools_path/go-secdump-custom
+        
+        log_sub "Cloning admi-assist"
+        git clone https://zcrosman@github.com/zcrosman/admi-assist.git $tools_path/admi-assit
+        
+        log_sub "Cloning rtsp-peek"
+        git clone https://zcrosman@github.com/zcrosman/rtsp-peek.git $tools_path/rtsp-peek
+        
+        log_sub "Cloning bnxc"
+        git clone https://zcrosman@github.com/zcrosman/bnxc.git $tools_path/bnxc
+        
+        log_sub "Cloning bimpacket"
+        git clone https://zcrosman@github.com/zcrosman/bimpacket.git $tools_path/bimpacket
+
+        log_sub "Creating shared working directory"
+        mkdir -p /share/Working/zach
+        log_sub "Copying admi-assist to shared directory"
+        cp -r /opt/admi-assit /share/Working/zach
+
+        # Clean up credentials for security
+        log_sub "Cleaning up GitHub credentials"
+        rm -f ~/.git-credentials
+        git config --global --unset credential.helper
+        git config --global credential.helper 'cache --timeout=432000'
+    else
+        log_sub "Skipping private repositories"
+    fi
     
     log "Personal tools installation complete"
 }
