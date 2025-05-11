@@ -10,25 +10,13 @@ debug=''
 debug='1>/dev/null'
 
 # Setup logging
-LOG_DIR="/opt/logs"
-LOG_FILE="setup_script.log"
-
-# Check if running in Docker and if a volume is mounted
-if [ -f /.dockerenv ] && [ -d /root/Documents ]; then
-    # We're in Docker and /root/Documents is mounted
-    LOG_DIR="/root/Documents/logs"
-    mkdir -p $LOG_DIR
-elif [ -f /.dockerenv ]; then
-    # We're in Docker but no volume is mounted to /root/Documents
-    LOG_DIR="/tmp"
-fi
-
+LOG_DIR="$HOME"
+LOG_FILE="install.log"
 LOG_PATH="$LOG_DIR/$LOG_FILE"
-mkdir -p $LOG_DIR
 rm -f "$LOG_PATH" && touch "$LOG_PATH"
 
 log_message() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> /tmp/setup_init.log
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_PATH"
 }
 
 log_message "Setting up logging to $LOG_PATH"
@@ -48,31 +36,22 @@ NOCOLOR='\033[0m'
 log() {
     local message
     message=$(echo -e "$GREENPLUS $1")
-    log_helper "$message"
+    echo "$message" >&3  # Write to original stdout
+    log_message "$message"
 }
 
 log_sub() {
     local message
     message=$(echo -e "   $GOLDDASH $1")
-    log_helper "$message"
+    echo "$message" >&3  # Write to original stdout
+    log_message "$message"
 }
 
 log_error() {
     local message
     message=$(echo -e "$REDEXCLAIM $1")
-    log_helper "$message"
-}
-
-log_helper() {
-    local message=$1
-    local timestamp
-    local log_message
-
-    timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-    log_message=$(echo -e "${BLUE}[$timestamp]${NOCOLOR} - $message")
-
     echo "$message" >&3  # Write to original stdout
-    echo "$log_message"  # Write to log file
+    log_message "$message"
 }
 
 # check_user() {
@@ -100,29 +79,22 @@ setup() {
     log "Running initial setup"
     log_sub "Updating apt and installing base packages"
     sudo apt update
-    sudo apt install -y git-all python3-pip pipx git
+    sudo apt install -y git-all python3-pip pipx git golang
     
     log_sub "Upgrading pip"
     python3 -m pip install --upgrade pip
     
     log_sub "Setting permissions"
     sudo chown -R $USER:$USER /opt
-    #zsh_setup
-    # For docker
-    # apt-get install wget
-    # apt install zip -y
+    
     log_sub "Setting Screenshot Shortcut (ctrl+shift+s)"
-
     # From Bryan - set flameshort shortcut
     if [ "$XDG_CURRENT_DESKTOP" == "GNOME" ]; then
-        #gsettings get org.gnome.settings-daemon.plugins.media-keys custom-keybindings
-        ## Set Shortcut
         gsettings set org.gnome.settings-daemon.plugins.media-keys custom-keybindings "['/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/']"
         gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ name "'flameshot'"
         gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ binding "'<primary><shift>s'"
         gsettings set org.gnome.settings-daemon.plugins.media-keys.custom-keybinding:/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/custom0/ command "'flameshot gui'"
     else
-    ## XFCE
         xfconf-query -c xfce4-keyboard-shortcuts -p "/commands/custom/<Primary><Shift>S" --create --type string --set "flameshot gui"
     fi
     log "Initial setup complete"
@@ -268,7 +240,7 @@ install_BOFs() {
     git clone https://github.com/KingOfTheNOPs/cookie-monster.git $agressor_path/cookie-monster
     cd $agressor_path/cookie-monster
     log_sub "Installing cookie-monster requirements"
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
     make
     
     log_sub "Cloning smbtakeover"
@@ -345,7 +317,7 @@ fast () {
     git clone https://github.com/topotam/PetitPotam.git $tools_path/PetitPotam 
 
     log_sub "Installing coercer"
-    python3 -m pip --break-system-packages install coercer 
+    python3 -m pip install coercer
 
     log_sub "Installing GoWitness"
     go install -v github.com/sensepost/gowitness@latest
@@ -353,23 +325,23 @@ fast () {
     log_sub "Installing onedrive_user_enum"
     git clone https://github.com/nyxgeek/onedrive_user_enum $tools_path/onedrive_user_enum
     cd $tools_path/onedrive_user_enum
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
 
     log_sub "Installing Go365"
     go install https://github.com/optiv/Go365@latest
 
     log_sub "Installing TrevorSpray"
-    pip --break-system-packages install git+https://github.com/blacklanternsecurity/trevorproxy
-    pip --break-system-packages install git+https://github.com/blacklanternsecurity/trevorspray
+    pip install git+https://github.com/blacklanternsecurity/trevorproxy
+    pip install git+https://github.com/blacklanternsecurity/trevorspray
 
     log_sub "Installing TeamFiltration"
     wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Linux-v3.5.0.zip -O $tools_path/TeamFiltration-Linux-v3.5.0.zip
     unzip TeamFiltration-Linux-v3.5.0.zip 
     
-    log_sub "Installing spraycharles"
-    python3 -m pip --break-system-packages install pipx
-    python3 -m pipx ensurepath
-    python3 -m pipx install spraycharles
+    # log_sub "Installing spraycharles"
+    # python3 -m pip install pipx
+    # python3 -m pipx ensurepath
+    # python3 -m pipx install spraycharles
 
     log_sub "Installing nuclei"
     go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
@@ -380,13 +352,13 @@ fast () {
     python3 setup.py install
 
     log_sub "Installing bopscrk"
-    python3 -m pip --break-system-packages install bopscrk
+    python3 -m pip install bopscrk
 
     log_sub "Installing MailSniper"
     git clone https://github.com/dafthack/MailSniper.git $powershell_scripts/MailSniper 
 
     log_sub "Installing censys"
-    python3 -m pip --break-system-packages install censys
+    python3 -m pip install censys
 
     log_sub "Installing waybackurls"
     go install github.com/tomnomnom/waybackurls@latest
@@ -459,8 +431,8 @@ install_tools() {
     git clone https://github.com/fox-it/BloodHound.py.git $tools_path/BloodHound_NEW.py 
 
     log_sub "Installing PRET"
-    pip --break-system-packages install colorama pysnmp 
-    pip --break-system-packages install win_unicode_console 
+    pip install colorama pysnmp 
+    pip install win_unicode_console 
     git clone https://github.com/RUB-NDS/PRET $tools_path/PRET 
 
     log_sub "Installing WebClientServiceScanner"
@@ -473,7 +445,7 @@ install_tools() {
 
     log_sub "Installing DonPAPI"
     git clone https://github.com/login-securite/DonPAPI.git $tools_path/DonPAPI 
-    python3 -m pip --break-system-packages install -r $tools_path/DonPAPI/requirements.txt 
+    python3 -m pip install -r $tools_path/DonPAPI/requirements.txt 
 
     log_sub "Installing ntlm_theft"
     git clone https://github.com/Greenwolf/ntlm_theft.git $tools_path/ntlm_theft
@@ -497,7 +469,7 @@ install_tools() {
     log_sub "Installing noPac"
     git clone https://github.com/Ridter/noPac.git $tools_path/noPac 
     cd $tools_path/noPac
-    python3 -m pip --break-system-packages install -r requirements.txt 
+    python3 -m pip install -r requirements.txt 
 
     log_sub "Installing Pcredz"
     git clone https://github.com/lgandx/PCredz.git $tools_path/Pcredz
@@ -508,29 +480,29 @@ install_tools() {
     go install -v github.com/atredispartners/flamingo@latest
 
     log_sub "Installing arsenal"
-    python3 -m pip --break-system-packages install arsenal-cli
+    python3 -m pip install arsenal-cli
 
     log_sub "Installing MANSPIDER"
     git clone https://github.com/blacklanternsecurity/MANSPIDER $tools_path/MANSPIDER
     cd $tools_path/MANSPIDER
-    python3 -m pip --break-system-packages install -r requirements.txt
-    python3 -m pip --break-system-packages install textract
+    python3 -m pip install -r requirements.txt
+    python3 -m pip install textract
     sudo apt install -y tesseract-ocr antiword
 
     log_sub "Installing CrackHound"
     git clone https://github.com/trustedsec/CrackHound $tools_path/CrackHound
     cd $tools_path/CrackHound
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
 
     log_sub "Installing Plumhound"
     git clone https://github.com/PlumHound/PlumHound.git $tools_path/Plumhound
     cd $tools_path/Plumhound
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
 
     log_sub "Installing Max"
     git clone https://github.com/knavesec/Max.git $tools_path/Max
     cd $tools_path/Max
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
 
     log_sub "Installing PowerSploit"
     git clone https://github.com/PowerShellMafia/PowerSploit.git $powershell_scripts/PowerSploit 
@@ -629,17 +601,16 @@ install_bh() {
     log "Installing BloodHound"
     # BloodHound
     mkdir $tools_path/BloodHound-All
-    log_sub "Downloading BloodHound releases"
-    wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_current.zip 
-    wget https://github.com/BloodHoundAD/BloodHound/releases/download/4.0.3/BloodHound-linux-x64.zip -O $tools_path/BloodHound-All/BloodHound_4.0.3.zip 
-    cd $tools_path/BloodHound-All
-    log_sub "Extracting BloodHound packages"
-    unzip BloodHound_current.zip -d BloodHound_current
-    unzip BloodHound_4.0.3.zip -d BloodHound_old
+    log_sub "Downloading BloodHound (Legacy)"
+    wget https://github.com/BloodHoundAD/BloodHound/releases/download/rolling/BloodHound-linux-x64.zip -O $tools_path/BloodHound_legacy.zip     
+    log_sub "Extracting BloodHound (Legacy)"
+    cd $tools_path
+    unzip BloodHound_legacy.zip  -d BloodHound_legacy
+
 
     # initialize cme to create cme.conf file
     # edit cme.conf to integrate with cme
-    if [ -d '~/.nxc/nxc.conf' ]
+    if [ -f '~/.nxc/nxc.conf' ]
     then
         log_sub "nxc.conf already exists"
         cme_config
@@ -721,11 +692,10 @@ win_binaries(){
     log_sub "Cloning GhostPack compiled binaries"
     git clone https://github.com/r3motecontrol/Ghostpack-CompiledBinaries.git $win_compiled/GhostPack 
 
-    log_sub "Downloading SharpHound"
-    wget https://github.com/BloodHoundAD/SharpHound/releases/download/v1.0.3/SharpHound-v1.0.3.zip -P $win_compiled
-    wget https://github.com/SpecterOps/BloodHound-Legacy/blob/master/Collectors/SharpHound.exe -P $win_compiled
+    log_sub "Downloading SharpHound (CE - latest)"
+    wget https://github.com/SpecterOps/SharpHound/releases/download/v2.6.5/SharpHound_v2.6.5_windows_x86.zip -P $win_compiled
     cd $win_compiled
-    unzip SharpHound-v1.0.3.zip
+    unzip SharpHound_v2.6.5_windows_x86.zip
 
     log_sub "Downloading TeamFiltration"
     wget https://github.com/Flangvik/TeamFiltration/releases/download/v3.5.0/TeamFiltration-Win-v3.5.0.zip -P $win_compiled
@@ -792,8 +762,8 @@ payload_creation () {
     log_sub "Installing PackMyPayload"
     git clone https://github.com/mgeeky/PackMyPayload.git $payload_mod/packmypayload 
     cd $payload_mod/packmypayload
-    pip --break-system-packages install --upgrade pip setuptools wheel 
-    python3 -m pip --break-system-packages install -r requirements.txt 
+    pip install --upgrade pip setuptools wheel 
+    python3 -m pip install -r requirements.txt 
 
     #nimpact
     # TODO setup nim
@@ -838,7 +808,7 @@ payload_creation () {
     go build $tools_path/ScareCrow/ScareCrow.go 
     
     log_sub "Installing donut-shellcode"
-    pip3 install donut-shellcode 
+    pip install donut-shellcode 
 
     log_sub "Installing ruler"
     git clone https://github.com/sensepost/ruler.git $payload_mod/ruler 
@@ -863,7 +833,7 @@ payload_creation () {
     log_sub "Installing Shhhloader"
     git clone https://github.com/icyguider/Shhhloader.git $payload_mod/Shhhloader
     cd $tools_path/Shhhloader
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
     
     log "Payload creation tools setup complete"
 }
@@ -955,7 +925,7 @@ my_tools () {
     git clone https://github.com/zcrosman/PassHound.git $tools_path/PassHound
     cd $tools_path/PassHound
     log_sub "Installing PassHound requirements"
-    python3 -m pip --break-system-packages install -r requirements.txt
+    python3 -m pip install -r requirements.txt
 
     log_sub "Cloning git-emails"
     git clone https://github.com/zcrosman/git-emails.git $tools_path/git-emails
