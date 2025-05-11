@@ -9,3 +9,6 @@ share-pw.py
 zsh-custom.zsh
 nuclei-templates/
 *.zip
+logs/*
+init.sh
+test.sh
