@@ -975,7 +975,7 @@ options() {
                 6) install_BOFs;;
                 7) setup;check_go;payload_creation;;
                 8) check_bh;;
-                f) setup;fast;zsh_setup;install_wl;;
+                f) setup;fast;install_wl;;
                 g) check_go;;
                 w) install_wl;;
                 z) zsh_setup;;
