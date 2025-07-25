@@ -13,6 +13,10 @@ alias copy="xclip -r -selection clipboard"
 alias which="which -a"
 alias copylast="history --show-time="" | tail -1 | xclip -r -selection clipboard"
 alias httpxl='httpx -p 80,81,300,443,591,593,832,981,1010,1311,2082,2087,2095,2096,2480,3000,3128,3333,4243,4567,4711,4712,4993,5000,5104,5108,5800,6543,7000,7396,7474,8000,8001,8008,8014,8042,8069,8080,8081,8088,8090,8091,8118,8123,8172,8222,8243,8280,8281,8333,8443,8500,8834,8880,8888,8983,9000,9043,9060,9080,9090,9091,9200,9443,9800,9981,12443,16080,18091,18092,20720,28017'
+alias ff="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt-rate 300 -e .txt,.zip,.xml,.json,.tar,.bak -t 100 -recursion -u"
+alias iis="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt -t 100 -rate 300 -e .aspx,.asp,.html,.htm,.ashx,.asmx,.txt,.zip,.bak,.svc,.xml,.rar,.json,.,/ -fl 4 -fw 17,73 -recursion -u"
+alias jsp="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt-t 100 -rate 300 -e .jsp,.do,.action,.txt,.zip,.bak,.html,.htm,.xml,.form -recursion -u"
+alias php1="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt-t 100 -rate 300 -e .php,.txt,.zip,.bak,.html,.htm,.xml -recursion -u"
 if [[ "$OSTYPE" == "darwin"* ]]; then
     alias folder='open'
 else
