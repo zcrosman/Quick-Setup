@@ -18,6 +18,8 @@ alias ff="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) A
 alias iis="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt -t 100 -rate 300 -e .aspx,.asp,.html,.htm,.ashx,.asmx,.txt,.zip,.bak,.svc,.xml,.rar,.json,.,/ -fl 4 -fw 17,73 -u"
 alias jsp="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt-t 100 -rate 300 -e .jsp,.do,.action,.txt,.zip,.bak,.html,.htm,.xml,.form -u"
 alias php1="ffuf -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36' -c -w /usr/share/wordlists/SecLists/Discovery/Web-Content/raft-large-directories-lowercase.txt-t 100 -rate 300 -e .php,.txt,.zip,.bak,.html,.htm,.xml -u"
+alias killsearch='f() { ps aux | grep -i "$1" | grep -v grep | awk "{print \$2}" | xargs -r kill -9; }; f'
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
     alias folder='open'
 else
