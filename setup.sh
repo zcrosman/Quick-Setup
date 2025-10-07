@@ -939,6 +939,8 @@ my_tools () {
 }
 
 menu () {
+    exec 1>&3 2>&4
+
     # clear
     echo -e "\n    Select an option from menu:"                      
     echo -e "\n Key  Menu Option:               Description:"
@@ -957,6 +959,9 @@ menu () {
     echo -e "  x - Exit                       Exit the setup script"                                      
 
     read -n1 -p "\n  Press key for menu item selection or press X to exit: " menu
+    echo 
+
+    exec 1>>"$LOG_PATH" 2>&1
 
     log_sub "User selected menu option: $menu"
     options $menu
