@@ -881,9 +881,9 @@ my_tools () {
 
     # Prompt for GitHub token for private repositories
     log_sub "GitHub token required for private repositories"
-    github_token=$(prompt_user "Enter your GitHub personal access token (press Enter to skip private repos): ")
+    # github_token=$(prompt_user "Enter your GitHub personal access token (press Enter to skip private repos): ")
     
-    if [ -n "$github_token" ]; then
+    # if [ -n "$github_token" ]; then
         # Store GitHub token temporarily
         log_sub "Storing GitHub credentials"
         echo "https://$github_token:x-oauth-basic@github.com" > ~/.git-credentials
@@ -931,9 +931,9 @@ my_tools () {
         rm -f ~/.git-credentials
         git config --global --unset credential.helper
         git config --global credential.helper 'cache --timeout=432000'
-    else
-        log_sub "Skipping private repositories"
-    fi
+    # else
+    #     log_sub "Skipping private repositories"
+    # fi
     
     log "Personal tools installation complete"
 }
