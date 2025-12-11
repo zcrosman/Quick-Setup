@@ -769,12 +769,12 @@
       ]
     },
     {
-      "name": "Better Search - User - Username/Description/Title (default: scada)",
+      "name": "Better Search - User/Computer/Group - Username/Description/Title/SPNs (default: scada)",
       "category": "Better Search",
       "queryList": [
         {
           "final": true,
-          "query": "with \"scada\" as search match (u:User) WHERE toLower(u.displayname) CONTAINS search OR toLower(u.distinguisedname) CONTAINS search OR toLower(u.title) CONTAINS search OR toLower(u.description) CONTAINS search RETURN u"
+          "query": "with toLower(\"scada\") as search match (u) WHERE toLower(u.displayname) CONTAINS search OR toLower(u.distinguisedname) CONTAINS search  OR toLower(u.samaccountname) CONTAINS search OR toLower(u.title) CONTAINS search OR toLower(u.description  CONTAINS search OR ANY(sp IN u.serviceprincipalnames WHERE toLower(sp) CONTAINS search) RETURN u"
         }
       ]
     },
